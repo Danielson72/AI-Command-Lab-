@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+# AI Command Lab extras
+.venv/
+__pycache__/
+*.pyc
+.env.local
+.env
