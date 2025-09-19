@@ -1,0 +1,44 @@
+# AI Command Lab — Agentic UI Module
+
+This repo contains a **Next.js (CopilotKit + AGUI)** frontend and a **Python FastAPI (Pydantic-style)** backend
+to demonstrate **agentic UI**: two-way state sync, front-end tools, and rich render directives.
+
+## Structure
+
+```
+.
+├─ next/            # Next.js + React app (Netlify)
+├─ server/          # FastAPI backend (DigitalOcean / Docker)
+├─ .devcontainer/   # Optional for Claude Code / VS Code dev containers
+├─ netlify.toml     # Deploy config for Next.js on Netlify
+└─ README.md
+```
+
+## Quick Start
+
+### 1) Backend (FastAPI) — local
+```bash
+cd server
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 2) Frontend (Next.js) — local
+```bash
+cd next
+npm install
+cp .env.local.example .env.local
+npm run dev
+```
+
+Open: http://localhost:3000/lab/agentic-ui  
+Backend default: http://localhost:8000
+
+## Deploy
+
+- **Frontend**: Netlify (connect GitHub → select root `netlify.toml` with base `next/`)
+- **Backend**: your Ubuntu server (systemd file in `server/systemd/agentic.service`)
+
+See detailed guide in this README below.
