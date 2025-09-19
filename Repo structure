@@ -1,0 +1,28 @@
+AI-Command-Lab-/
+ ├─ next/
+ │   ├─ package.json
+ │   ├─ tsconfig.json
+ │   ├─ next-env.d.ts
+ │   ├─ .env.local.example
+ │   ├─ .eslintrc.json
+ │   ├─ app/layout.tsx
+ │   ├─ app/page.tsx
+ │   ├─ app/lab/agentic-ui/page.tsx
+ │   ├─ components/RenderHost.tsx
+ │   └─ lib/
+ │       ├─ state.ts
+ │       └─ api.ts
+ ├─ server/
+ │   ├─ requirements.txt
+ │   ├─ .env.example
+ │   ├─ models.py
+ │   ├─ tools.py
+ │   ├─ app.py
+ │   ├─ README_SERVER.md
+ │   ├─ Dockerfile
+ │   └─ systemd/agentic.service
+ ├─ .devcontainer/
+ │   └─ devcontainer.json
+ ├─ netlify.toml
+ ├─ .gitignore
+ └─ README.md
