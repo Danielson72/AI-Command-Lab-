@@ -1,0 +1,32 @@
+'use client';
+import { useState } from 'react';
+import { useUIState } from '../../../lib/state';
+import { invokeAgent } from '../../../lib/api';
+import RenderHost from '../../../components/RenderHost';
+
+export default function AgenticUIPage() {
+  const ui = useUIState();
+  const [input, setInput] = useState('');
+  const [events, setEvents] = useState<any[]>([]);
+  const [messages, setMessages] = useState<{role:'user'|'assistant',content:string}[]>([]);
+
+  async function onSend() {
+    const nextMsgs = [...messages, { role: 'user', content: input }];
+    setMessages(nextMsgs);
+    setInput('');
+    const res = await invokeAgent(nextMsgs, ui);
+    if (res.reply) setMessages([...nextMsgs, { role: 'assistant', content: res.reply }]);
+    if (res.events) setEvents(res.events);
+    if (res.patch) ui.applyPatch(res.patch);
+  }
+
+  return (
+    <main style={{ padding: 24 }}>
+      <h1>Agentic UI Demo</h1>
+      <textarea value={input} onChange={(e)=>setInput(e.target.value)} />
+      <button onClick={onSend}>Send</button>
+      <div>{messages.map((m,i)=><p key={i}><b>{m.role}:</b> {m.content}</p>)}</div>
+      <RenderHost events={events}/>
+    </main>
+  );
+}
