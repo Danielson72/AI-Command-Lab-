@@ -1,8 +1,11 @@
-export default function Home() {
+import Link from 'next/link';
+
+export default function HomePage() {
   return (
-    <main style={{ padding: 24 }}>
-      <h1>AI Command Lab</h1>
-      <p>Visit <a href="/lab/agentic-ui">Agentic UI Demo</a></p>
-    </main>
+    <section className="space-y-3">
+      <h2 className="text-2xl font-bold mb-2">Welcome to AI Command Lab</h2>
+      <p>Central dashboard for multi-brand automation.</p>
+      <Link className="underline" href="/lab/agentic-ui">Open Agentic UI Demo →</Link>
+    </section>
   );
 }
