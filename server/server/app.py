@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from agent import run_agent
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "https://*.netlify.app"]
+origins = [
+    "http://localhost:3000",
+    "https://*.netlify.app",      # Netlify previews
+    "https://*.netlify.app:443",  # some preview configs
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -18,9 +21,6 @@ app.add_middleware(
 def health():
     return {"ok": True}
 
-class AgentReq(BaseModel):
-    prompt: str
-
-@app.post("/agent/run")
-def agent_run(req: AgentReq):
-    return run_agent(req.prompt)
+@app.get("/hello")
+def hello():
+    return {"message": "Hello from FastAPI"}
