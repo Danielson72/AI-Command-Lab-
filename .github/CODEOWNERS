@@ -1,0 +1,15 @@
+# Code owners for AI Command Lab
+# These owners will be requested for review when someone opens a pull request
+
+# Default owners for everything in the repo
+* @Danielson72
+
+# Next.js application
+/next/ @Danielson72
+
+# Database schema and policies
+/db/ @Danielson72
+
+# GitHub workflows
+/.github/ @Danielson72
+
