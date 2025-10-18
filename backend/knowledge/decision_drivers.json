@@ -1,0 +1,281 @@
+{
+  "decision_drivers": {
+    "description": "Psychology of B2B decision-making and how to guide customers through the buying journey",
+    "decision_making_models": [
+      {
+        "model": "Rational Decision-Making",
+        "description": "Logical, analytical approach based on data and ROI",
+        "characteristics": {
+          "decision_maker_type": "Analytical, data-driven, risk-averse",
+          "key_questions": [
+            "What's the ROI?",
+            "Show me the numbers",
+            "What are the risks?",
+            "How does this compare to alternatives?"
+          ],
+          "decision_timeline": "Slow and deliberate—weeks to months",
+          "influencers": "Data, case studies, testimonials, guarantees"
+        },
+        "how_to_serve": {
+          "provide": "Detailed analytics, ROI calculators, comparison charts, risk mitigation plans",
+          "communicate": "Be precise, factual, and thorough. Use numbers and evidence.",
+          "pace": "Don't rush. Give them time to analyze and validate.",
+          "example": "Based on your current traffic of 5,000 visitors/month and a 2% conversion rate, implementing our optimization strategy could increase conversions to 5%, generating an additional 150 leads per month. At your average client value of $2,000, that's $300K in additional annual revenue for a $15K investment—a 20x ROI."
+        }
+      },
+      {
+        "model": "Intuitive Decision-Making",
+        "description": "Gut-feel, instinct-based approach driven by experience and pattern recognition",
+        "characteristics": {
+          "decision_maker_type": "Experienced, confident, action-oriented",
+          "key_questions": [
+            "Does this feel right?",
+            "Do I trust you?",
+            "Have I seen this work before?",
+            "What's my gut telling me?"
+          ],
+          "decision_timeline": "Fast—days to weeks",
+          "influencers": "Trust, rapport, confidence, storytelling"
+        },
+        "how_to_serve": {
+          "provide": "Clear vision, strong relationship, compelling stories, confident guidance",
+          "communicate": "Be direct, authentic, and confident. Paint the picture.",
+          "pace": "Move quickly when they're ready. Don't over-explain.",
+          "example": "I've worked with dozens of businesses in your position. Here's what I know: the ones who act decisively on this see results within 90 days. The ones who overthink it stay stuck. You strike me as someone who trusts their instincts—what's your gut telling you?"
+        }
+      },
+      {
+        "model": "Consensus Decision-Making",
+        "description": "Collaborative approach requiring buy-in from multiple stakeholders",
+        "characteristics": {
+          "decision_maker_type": "Team-oriented, risk-averse, politically aware",
+          "key_questions": [
+            "What will the team think?",
+            "How do I get buy-in?",
+            "Who else needs to approve this?",
+            "What if someone disagrees?"
+          ],
+          "decision_timeline": "Slow—weeks to months (depends on stakeholders)",
+          "influencers": "Stakeholder alignment, presentation materials, pilot programs"
+        },
+        "how_to_serve": {
+          "provide": "Presentation decks, stakeholder-specific value props, pilot options, executive summaries",
+          "communicate": "Help them sell internally. Provide ammunition for their pitch.",
+          "pace": "Be patient with process. Offer to present to stakeholders.",
+          "example": "I know you'll need to present this to your team. Let me put together a deck that addresses each stakeholder's concerns—ROI for finance, implementation timeline for operations, and customer impact for your CEO. I'm also happy to join the meeting to answer questions directly."
+        }
+      },
+      {
+        "model": "Avoidance Decision-Making",
+        "description": "Delaying or avoiding decisions due to fear, overwhelm, or uncertainty",
+        "characteristics": {
+          "decision_maker_type": "Overwhelmed, uncertain, fearful of making wrong choice",
+          "key_questions": [
+            "What if I make the wrong choice?",
+            "Can I think about it?",
+            "Maybe I should wait...",
+            "I'm not sure I'm ready"
+          ],
+          "decision_timeline": "Indefinite—often never decides",
+          "influencers": "Simplification, risk reversal, small commitments, deadlines"
+        },
+        "how_to_serve": {
+          "provide": "Simple next steps, low-risk entry points, clear decision framework, gentle urgency",
+          "communicate": "Reduce overwhelm. Break it into small, manageable decisions.",
+          "pace": "Create momentum with micro-commitments. Don't let them stall indefinitely.",
+          "example": "I can see this feels like a big decision. Let's break it down. Instead of committing to the full program, why don't we start with a 30-day pilot? You'll see results, we'll prove our value, and then you can decide if you want to continue. Does that feel more manageable?"
+        }
+      }
+    ],
+    "decision_journey_stages": [
+      {
+        "stage": "1. Problem Recognition",
+        "description": "Customer realizes they have a problem or opportunity",
+        "customer_mindset": "Something needs to change",
+        "your_role": "Help them clearly define and quantify the problem",
+        "key_actions": [
+          "Ask diagnostic questions",
+          "Help them see the full scope and cost of the problem",
+          "Validate that the problem is worth solving"
+        ],
+        "example_questions": [
+          "What's prompting you to look for a solution now?",
+          "How long has this been an issue?",
+          "What's it costing you—in time, money, or opportunity?",
+          "What happens if this doesn't get solved?"
+        ]
+      },
+      {
+        "stage": "2. Information Search",
+        "description": "Customer researches potential solutions and providers",
+        "customer_mindset": "What are my options?",
+        "your_role": "Educate and position yourself as the trusted expert",
+        "key_actions": [
+          "Provide valuable content and insights",
+          "Differentiate your approach clearly",
+          "Build credibility through expertise, not sales pitches"
+        ],
+        "example_questions": [
+          "What have you tried so far?",
+          "What are you looking for in a solution?",
+          "What would make this a no-brainer for you?",
+          "What concerns do you have about different approaches?"
+        ]
+      },
+      {
+        "stage": "3. Evaluation of Alternatives",
+        "description": "Customer compares different solutions and providers",
+        "customer_mindset": "Which option is best for me?",
+        "your_role": "Help them evaluate objectively while highlighting your unique value",
+        "key_actions": [
+          "Provide comparison frameworks",
+          "Highlight what makes you different (not just better)",
+          "Address objections proactively"
+        ],
+        "example_questions": [
+          "What criteria are most important to you?",
+          "What are you comparing us against?",
+          "What would make one option clearly stand out?",
+          "What's your biggest concern about moving forward?"
+        ]
+      },
+      {
+        "stage": "4. Purchase Decision",
+        "description": "Customer commits to a solution and provider",
+        "customer_mindset": "I'm ready, but I need final reassurance",
+        "your_role": "Remove final barriers and make it easy to say yes",
+        "key_actions": [
+          "Summarize value and fit",
+          "Address any lingering concerns",
+          "Make the process simple and clear",
+          "Provide final reassurance (guarantees, testimonials)"
+        ],
+        "example_questions": [
+          "What would make you feel 100% confident moving forward?",
+          "Is there anything holding you back?",
+          "What needs to happen for this to be a definite yes?",
+          "When would you ideally want to get started?"
+        ]
+      },
+      {
+        "stage": "5. Post-Purchase Evaluation",
+        "description": "Customer assesses whether they made the right decision",
+        "customer_mindset": "Did I make the right choice?",
+        "your_role": "Deliver results and reinforce their decision",
+        "key_actions": [
+          "Onboard smoothly and professionally",
+          "Deliver quick wins early",
+          "Communicate proactively",
+          "Celebrate milestones and results"
+        ],
+        "example_questions": [
+          "How are you feeling about the decision so far?",
+          "What early wins can we celebrate?",
+          "Is this meeting your expectations?",
+          "What would make this a 10/10 experience?"
+        ]
+      }
+    ],
+    "objection_handling_framework": {
+      "description": "Common objections and how to address them with integrity",
+      "objections": [
+        {
+          "objection": "It's too expensive",
+          "real_concern": "I don't see the value justifying the cost",
+          "response_framework": {
+            "acknowledge": "I understand price is a consideration—you want to make sure this is a smart investment.",
+            "reframe": "Let's talk about value, not just cost. What would it be worth to [achieve desired outcome]?",
+            "quantify": "If this generates [specific result], what's that worth to your business?",
+            "example": "I hear you on the investment. Let's break it down: you're currently losing about $10K/month in missed opportunities. Our solution costs $5K and typically pays for itself in the first month. After that, it's pure profit. Does that math work for you?"
+          }
+        },
+        {
+          "objection": "I need to think about it",
+          "real_concern": "I'm uncertain, overwhelmed, or avoiding decision",
+          "response_framework": {
+            "acknowledge": "Absolutely—this is an important decision and you should feel confident.",
+            "clarify": "What specifically do you need to think through? Maybe I can help.",
+            "timeline": "When were you thinking of making a decision? What happens between now and then?",
+            "example": "Of course, take the time you need. Just so I can help—what specifically are you mulling over? Is it budget, timing, or something about the solution itself? Let's talk it through."
+          }
+        },
+        {
+          "objection": "I'm already working with someone else",
+          "real_concern": "Why should I switch or add another provider?",
+          "response_framework": {
+            "acknowledge": "That's great that you have someone—loyalty matters.",
+            "explore": "How's that working for you? Are you getting the results you want?",
+            "differentiate": "Here's what we do differently: [unique value].",
+            "example": "I respect that you're working with someone. How's that going for you? Are you seeing the results you hoped for? I'm not here to replace them—but if there's a gap we can fill, I'd love to explore that."
+          }
+        },
+        {
+          "objection": "I don't have time right now",
+          "real_concern": "This isn't a priority, or I'm overwhelmed",
+          "response_framework": {
+            "acknowledge": "I totally get it—you're busy running your business.",
+            "reframe": "That's exactly why this matters. This is designed to save you time, not add to your plate.",
+            "urgency": "The longer you wait, the more time you lose. What if we could get this set up in a way that requires minimal time from you?",
+            "example": "I hear you—time is your most valuable resource. That's why we handle everything. You'd spend maybe 2 hours total on setup, and then it runs on autopilot. Can you afford 2 hours to save 10+ hours per week going forward?"
+          }
+        },
+        {
+          "objection": "I need to talk to my partner/team/spouse",
+          "real_concern": "I don't have sole decision-making authority",
+          "response_framework": {
+            "acknowledge": "Absolutely—it's smart to involve the people who'll be affected.",
+            "facilitate": "What concerns do you think they'll have? Let's address those now so you're prepared.",
+            "offer": "Would it help if I joined that conversation to answer questions directly?",
+            "example": "That makes total sense. What do you think their main questions or concerns will be? Let's make sure you have everything you need to present this confidently. I'm also happy to hop on a call with them if that helps."
+          }
+        }
+      ]
+    },
+    "closing_techniques": {
+      "description": "Ethical ways to guide customers to a decision",
+      "techniques": [
+        {
+          "name": "Assumptive Close",
+          "when_to_use": "Customer is clearly interested and aligned",
+          "how": "Act as if the decision is made and move to next steps",
+          "example": "Great! Let's get you onboarded. I'll send over the agreement and we can kick off next week. Does Monday or Wednesday work better for our kickoff call?"
+        },
+        {
+          "name": "Summary Close",
+          "when_to_use": "After thorough discussion, customer needs clarity",
+          "how": "Summarize value, fit, and next steps",
+          "example": "So just to recap: you need [X], we deliver [Y], and you'll see [Z result] within [timeframe]. If that sounds right, let's move forward. What do you think?"
+        },
+        {
+          "name": "Alternative Close",
+          "when_to_use": "Customer is ready but needs to feel in control",
+          "how": "Offer two positive options instead of yes/no",
+          "example": "Would you prefer to start with the full package, or begin with the starter plan and scale up?"
+        },
+        {
+          "name": "Trial Close",
+          "when_to_use": "Testing readiness without pressuring",
+          "how": "Ask a question that gauges commitment",
+          "example": "If we could solve [specific problem], would that be valuable enough to move forward?"
+        },
+        {
+          "name": "Urgency Close",
+          "when_to_use": "Customer is procrastinating despite clear fit",
+          "how": "Introduce genuine time-sensitive factor",
+          "example": "We have one spot left this month. After that, you're looking at a 4-6 week wait. Do you want to lock in now or wait until next quarter?"
+        }
+      ]
+    },
+    "ethical_principles": {
+      "core_belief": "Selling is serving. If you can't serve them well, don't sell to them.",
+      "rules": [
+        "Never close someone who isn't a good fit",
+        "Never use pressure tactics that create regret",
+        "Always prioritize long-term relationship over short-term sale",
+        "Be willing to walk away if it's not right",
+        "Measure success by customer outcomes, not just revenue"
+      ]
+    }
+  }
+}
+

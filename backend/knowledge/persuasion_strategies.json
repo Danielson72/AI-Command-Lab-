@@ -1,0 +1,190 @@
+{
+  "persuasion_strategies": {
+    "description": "Ethical persuasion frameworks based on psychology and value-driven selling",
+    "core_principles": {
+      "integrity_first": "Never manipulate—always serve the customer's genuine best interest",
+      "value_focus": "Lead with value, not features",
+      "empathy_driven": "Understand before being understood",
+      "long_term_thinking": "Build relationships, not just transactions"
+    },
+    "strategies": [
+      {
+        "name": "Social Proof",
+        "description": "People follow the actions of others, especially those similar to them",
+        "application": {
+          "when_to_use": "Customer is uncertain or skeptical",
+          "how_to_use": "Share specific success stories from similar businesses or industries",
+          "example": "We recently helped a cleaning company just like yours increase their monthly bookings by 40% in 90 days. They were skeptical too, but the results spoke for themselves."
+        },
+        "ethical_boundaries": [
+          "Only share real, verifiable results",
+          "Don't exaggerate or cherry-pick outliers",
+          "Ensure examples are relevant to customer's situation"
+        ]
+      },
+      {
+        "name": "Scarcity & Urgency",
+        "description": "People value things more when they perceive limited availability",
+        "application": {
+          "when_to_use": "Customer is interested but procrastinating",
+          "how_to_use": "Highlight genuine time-sensitive opportunities or limited capacity",
+          "example": "We only take on 3 new clients per month to ensure quality. We have one spot left for June, and after that, you'd be looking at July or August."
+        },
+        "ethical_boundaries": [
+          "Only create urgency based on real constraints",
+          "Never use false scarcity or fake deadlines",
+          "Don't pressure—inform and let them decide"
+        ]
+      },
+      {
+        "name": "Reciprocity",
+        "description": "People feel obligated to give back when they receive something of value",
+        "application": {
+          "when_to_use": "Building initial relationship and trust",
+          "how_to_use": "Provide genuine value upfront—free audit, insights, or consultation",
+          "example": "I'd love to do a free 15-minute website audit for you. No strings attached—I'll show you exactly what's working, what's not, and what quick wins you could implement today."
+        },
+        "ethical_boundaries": [
+          "Give value without expectation of immediate return",
+          "Don't make the 'free' offer feel like a trap",
+          "Ensure the value is genuinely useful, not a sales pitch"
+        ]
+      },
+      {
+        "name": "Authority & Expertise",
+        "description": "People trust and follow credible experts in a field",
+        "application": {
+          "when_to_use": "Customer needs confidence in your capability",
+          "how_to_use": "Demonstrate deep knowledge through insights, not credentials",
+          "example": "Based on your industry and target market, I'd recommend focusing on local SEO first, then retargeting ads. Here's why: [specific reasoning based on data]."
+        },
+        "ethical_boundaries": [
+          "Earn authority through knowledge, not boasting",
+          "Admit what you don't know",
+          "Focus on customer's success, not your credentials"
+        ]
+      },
+      {
+        "name": "Commitment & Consistency",
+        "description": "People want to act consistently with their stated beliefs and past actions",
+        "application": {
+          "when_to_use": "Customer has expressed goals or values",
+          "how_to_use": "Align your solution with their stated priorities",
+          "example": "You mentioned that customer experience is your top priority. That's exactly what this solution delivers—a seamless, professional experience that keeps clients coming back."
+        },
+        "ethical_boundaries": [
+          "Only align if there's genuine fit",
+          "Don't twist their words to fit your agenda",
+          "Help them stay true to their values"
+        ]
+      },
+      {
+        "name": "Liking & Rapport",
+        "description": "People prefer to do business with those they like and relate to",
+        "application": {
+          "when_to_use": "Throughout all interactions",
+          "how_to_use": "Find common ground, show genuine interest, mirror communication style",
+          "example": "I saw on your site that you're a family-owned business—so are we. We get what it's like to build something from the ground up and protect your reputation."
+        },
+        "ethical_boundaries": [
+          "Be genuinely interested, not fake",
+          "Don't manufacture false commonalities",
+          "Respect differences"
+        ]
+      },
+      {
+        "name": "Contrast Principle",
+        "description": "People evaluate options relative to alternatives, not in isolation",
+        "application": {
+          "when_to_use": "Presenting pricing or package options",
+          "how_to_use": "Show the cost of inaction or inferior alternatives",
+          "example": "You could try to piece this together yourself with freelancers—most people spend $5K+ and 6 months before giving up. Or we can deliver it in 30 days for $3K, fully managed."
+        },
+        "ethical_boundaries": [
+          "Use real comparisons, not straw men",
+          "Don't unfairly criticize competitors",
+          "Present options honestly"
+        ]
+      },
+      {
+        "name": "Loss Aversion",
+        "description": "People are more motivated to avoid losses than to achieve equivalent gains",
+        "application": {
+          "when_to_use": "Customer is comfortable with status quo",
+          "how_to_use": "Highlight what they're currently losing or missing out on",
+          "example": "Right now, you're losing about 60% of your website visitors because there's no clear call-to-action. That's like leaving money on the table every single day."
+        },
+        "ethical_boundaries": [
+          "Only highlight real, quantifiable losses",
+          "Don't fear-monger or catastrophize",
+          "Balance with positive vision"
+        ]
+      },
+      {
+        "name": "Storytelling",
+        "description": "People remember and connect with stories more than facts",
+        "application": {
+          "when_to_use": "Explaining complex concepts or building emotional connection",
+          "how_to_use": "Share customer journey stories with clear before/after transformation",
+          "example": "Let me tell you about Sarah, a wedding photographer who was drowning in admin work. She was spending 20 hours a week on emails and bookings instead of shooting. We automated her entire client flow, and now she's booking 3x more weddings with half the admin time."
+        },
+        "ethical_boundaries": [
+          "Tell true stories (with permission)",
+          "Don't embellish or fabricate",
+          "Make the customer the hero, not yourself"
+        ]
+      },
+      {
+        "name": "Future Pacing",
+        "description": "Help people visualize and emotionally experience the desired outcome",
+        "application": {
+          "when_to_use": "Customer is interested but needs to see the vision",
+          "how_to_use": "Paint a vivid picture of their future success",
+          "example": "Imagine it's six months from now. You're getting 5-10 qualified leads per week from your website. Your calendar is full. You're turning down work because you're booked solid. That's not a fantasy—that's what this system delivers."
+        },
+        "ethical_boundaries": [
+          "Only promise what you can realistically deliver",
+          "Don't create unrealistic expectations",
+          "Ground vision in concrete steps"
+        ]
+      }
+    ],
+    "combination_frameworks": {
+      "trust_building_sequence": [
+        "Reciprocity (give value)",
+        "Authority (demonstrate expertise)",
+        "Social Proof (show results)",
+        "Liking (build rapport)"
+      ],
+      "decision_acceleration_sequence": [
+        "Loss Aversion (show current cost)",
+        "Future Pacing (show desired state)",
+        "Contrast (show alternatives)",
+        "Scarcity (show timing)"
+      ],
+      "objection_handling_sequence": [
+        "Empathy (acknowledge concern)",
+        "Authority (provide expert insight)",
+        "Social Proof (show how others overcame same concern)",
+        "Commitment (align with their values)"
+      ]
+    },
+    "ethical_guardrails": {
+      "never": [
+        "Lie or exaggerate",
+        "Create false urgency",
+        "Manipulate emotions for personal gain",
+        "Pressure or coerce",
+        "Sell something that won't serve the customer"
+      ],
+      "always": [
+        "Put customer's best interest first",
+        "Be transparent about limitations",
+        "Admit when you're not the right fit",
+        "Follow through on promises",
+        "Measure success by customer outcomes, not just sales"
+      ]
+    }
+  }
+}
+

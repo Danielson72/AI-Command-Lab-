@@ -1,0 +1,253 @@
+{
+  "emotional_triggers": {
+    "description": "Common emotional triggers in B2B and service-based selling, with ethical response frameworks",
+    "triggers": [
+      {
+        "trigger": "Fear of Missing Out (FOMO)",
+        "underlying_need": "Belonging, staying competitive, not being left behind",
+        "customer_signals": [
+          "What are my competitors doing?",
+          "Is this the new standard?",
+          "Am I behind the curve?",
+          "Everyone seems to be doing this"
+        ],
+        "ethical_response": {
+          "acknowledge": "It's natural to want to stay ahead of the curve in your industry.",
+          "reframe": "The question isn't what everyone else is doing—it's what will actually move the needle for YOUR business.",
+          "guide": "Let's focus on what makes strategic sense for your specific goals, not just what's trendy.",
+          "tone": "grounding, strategic, customer-focused"
+        },
+        "avoid": [
+          "Exaggerating competitor actions",
+          "Creating artificial peer pressure",
+          "Suggesting they're failing if they don't act now"
+        ]
+      },
+      {
+        "trigger": "Desire for Status & Recognition",
+        "underlying_need": "Respect, achievement, being seen as successful",
+        "customer_signals": [
+          "Want to be seen as a leader",
+          "Looking to stand out",
+          "Want to impress clients/peers",
+          "Concerned about brand perception"
+        ],
+        "ethical_response": {
+          "acknowledge": "Your reputation and brand positioning matter—they're assets you've worked hard to build.",
+          "reframe": "True status comes from delivering exceptional value, not just looking good.",
+          "guide": "Let's build something that makes you proud AND delivers real results for your clients.",
+          "tone": "respectful, aspirational, substance-focused"
+        },
+        "avoid": [
+          "Appealing to vanity over value",
+          "Suggesting superficial solutions",
+          "Making it about ego instead of impact"
+        ]
+      },
+      {
+        "trigger": "Pain Avoidance",
+        "underlying_need": "Relief from current frustration, stress, or struggle",
+        "customer_signals": [
+          "This is driving me crazy",
+          "I'm losing sleep over this",
+          "Can't keep doing this",
+          "Something has to change"
+        ],
+        "ethical_response": {
+          "acknowledge": "I can hear that this is causing real stress, and that's not sustainable.",
+          "reframe": "Pain is a signal—it's telling you something needs to change. Let's address the root cause.",
+          "guide": "Here's how we can eliminate [specific pain point] permanently, not just put a band-aid on it.",
+          "tone": "empathetic, solution-focused, relieving"
+        },
+        "avoid": [
+          "Amplifying pain unnecessarily",
+          "Fear-mongering about consequences",
+          "Exploiting desperation"
+        ]
+      },
+      {
+        "trigger": "Desire for Control",
+        "underlying_need": "Autonomy, predictability, feeling in charge of outcomes",
+        "customer_signals": [
+          "Need to know exactly what's happening",
+          "Don't like surprises",
+          "Want full transparency",
+          "Need to be involved in decisions"
+        ],
+        "ethical_response": {
+          "acknowledge": "You want to feel confident and in control of this process—that's completely reasonable.",
+          "reframe": "Control comes from clarity and partnership, not micromanagement.",
+          "guide": "Here's our process, step by step. You'll have full visibility and input at every stage.",
+          "tone": "transparent, collaborative, structured"
+        },
+        "avoid": [
+          "Being vague or evasive",
+          "Overpromising certainty",
+          "Making them feel powerless"
+        ]
+      },
+      {
+        "trigger": "Hope for Transformation",
+        "underlying_need": "Growth, breakthrough, achieving a better future",
+        "customer_signals": [
+          "Ready for the next level",
+          "Want to scale",
+          "Looking for a breakthrough",
+          "Tired of incremental progress"
+        ],
+        "ethical_response": {
+          "acknowledge": "I love that you're thinking big and ready to invest in real growth.",
+          "reframe": "Transformation requires both vision and execution—we'll help you with both.",
+          "guide": "Here's the roadmap: where you are now, where you want to be, and the specific steps to get there.",
+          "tone": "inspiring, realistic, action-oriented"
+        },
+        "avoid": [
+          "Overpromising unrealistic results",
+          "Selling dreams without substance",
+          "Ignoring the work required"
+        ]
+      },
+      {
+        "trigger": "Trust & Safety",
+        "underlying_need": "Security, reliability, protection from risk",
+        "customer_signals": [
+          "What if it doesn't work?",
+          "How do I know you'll deliver?",
+          "What's the guarantee?",
+          "I've been burned before"
+        ],
+        "ethical_response": {
+          "acknowledge": "Trust is earned, not given. You're right to ask these questions.",
+          "reframe": "Let's build trust through transparency, proof, and clear commitments.",
+          "guide": "Here's exactly what we'll deliver, when, and what happens if we don't meet expectations.",
+          "tone": "reassuring, honest, accountable"
+        },
+        "avoid": [
+          "Being defensive about skepticism",
+          "Making guarantees you can't keep",
+          "Rushing trust-building process"
+        ]
+      },
+      {
+        "trigger": "Belonging & Community",
+        "underlying_need": "Connection, being part of something bigger, shared identity",
+        "customer_signals": [
+          "Who else uses this?",
+          "What's the community like?",
+          "Will I fit in?",
+          "Looking for like-minded people"
+        ],
+        "ethical_response": {
+          "acknowledge": "You want to be part of a community that shares your values and goals—that matters.",
+          "reframe": "The best partnerships feel like joining a tribe, not just hiring a vendor.",
+          "guide": "Here's who we work with and why they love being part of this community.",
+          "tone": "inclusive, warm, values-driven"
+        },
+        "avoid": [
+          "Creating artificial exclusivity",
+          "Making them feel like an outsider",
+          "Using tribalism to manipulate"
+        ]
+      },
+      {
+        "trigger": "Curiosity & Discovery",
+        "underlying_need": "Learning, understanding, exploring possibilities",
+        "customer_signals": [
+          "How does this work?",
+          "Tell me more about...",
+          "What makes this different?",
+          "I'm researching options"
+        ],
+        "ethical_response": {
+          "acknowledge": "I appreciate that you're doing your homework and exploring all the options.",
+          "reframe": "The more you understand, the better decision you'll make—let's dig in.",
+          "guide": "Here's a detailed breakdown of how this works, why it works, and how it applies to you.",
+          "tone": "educational, patient, thorough"
+        },
+        "avoid": [
+          "Overwhelming with jargon",
+          "Hiding information",
+          "Rushing the learning process"
+        ]
+      },
+      {
+        "trigger": "Simplicity & Ease",
+        "underlying_need": "Efficiency, convenience, reducing cognitive load",
+        "customer_signals": [
+          "I don't have time for complicated",
+          "Just make it easy",
+          "Can this be automated?",
+          "I need turnkey"
+        ],
+        "ethical_response": {
+          "acknowledge": "You're busy, and you need solutions that work without adding to your plate.",
+          "reframe": "Simple doesn't mean superficial—it means we handle the complexity so you don't have to.",
+          "guide": "Here's how we make this effortless for you: [specific process].",
+          "tone": "streamlined, clear, service-oriented"
+        },
+        "avoid": [
+          "Oversimplifying to the point of being misleading",
+          "Hiding necessary complexity",
+          "Promising 'set it and forget it' when involvement is needed"
+        ]
+      },
+      {
+        "trigger": "Legacy & Impact",
+        "underlying_need": "Meaning, contribution, leaving something behind",
+        "customer_signals": [
+          "Want to make a difference",
+          "Building something lasting",
+          "What's my legacy?",
+          "Want to be remembered for..."
+        ],
+        "ethical_response": {
+          "acknowledge": "You're not just building a business—you're building something meaningful that will outlast you.",
+          "reframe": "Legacy is built through consistent value delivery, not grand gestures.",
+          "guide": "Let's create something that serves your clients so well, they remember you for years to come.",
+          "tone": "reverent, purpose-driven, long-term focused"
+        },
+        "avoid": [
+          "Being grandiose or preachy",
+          "Making it about you instead of them",
+          "Losing sight of practical execution"
+        ]
+      }
+    ],
+    "trigger_combinations": {
+      "description": "Common combinations of triggers that appear together",
+      "patterns": [
+        {
+          "combination": "Pain Avoidance + Hope for Transformation",
+          "scenario": "Customer is suffering but ready to change",
+          "approach": "Acknowledge pain, validate desire for change, show clear path to transformation"
+        },
+        {
+          "combination": "Trust & Safety + Desire for Control",
+          "scenario": "Customer is risk-averse and detail-oriented",
+          "approach": "Provide extreme transparency, detailed roadmap, clear guarantees"
+        },
+        {
+          "combination": "Status & Recognition + Belonging & Community",
+          "scenario": "Customer wants to be seen as a leader among peers",
+          "approach": "Position as joining an elite group while standing out within it"
+        },
+        {
+          "combination": "Simplicity & Ease + Curiosity & Discovery",
+          "scenario": "Customer wants to understand but doesn't want complexity",
+          "approach": "Educate clearly and thoroughly, then simplify execution"
+        }
+      ]
+    },
+    "ethical_framework": {
+      "principle": "Emotional triggers are not manipulation tools—they're insight into human needs",
+      "guidelines": [
+        "Use triggers to understand, not to exploit",
+        "Address the underlying need, not just the surface emotion",
+        "Never amplify negative emotions for gain",
+        "Always guide toward genuine value and fit",
+        "Respect the customer's emotional state and decision-making process"
+      ]
+    }
+  }
+}
+
