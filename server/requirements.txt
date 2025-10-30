@@ -1,0 +1,137 @@
+# ================================================================
+# AI Command Lab - Python Dependencies
+# ================================================================
+# Install with: pip install -r requirements.txt
+# Or with venv: python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+# ================================================================
+
+# ----------------------------------------------------------------
+# Core Framework
+# ----------------------------------------------------------------
+# FastAPI - Modern web framework for building APIs
+fastapi==0.115.6
+
+# Uvicorn - ASGI server for FastAPI
+uvicorn[standard]==0.34.0
+
+# Pydantic - Data validation using Python type hints
+pydantic==2.10.5
+pydantic-settings==2.7.1
+pydantic[email]==2.10.5
+
+# ----------------------------------------------------------------
+# AI/ML
+# ----------------------------------------------------------------
+# Anthropic Claude API client
+anthropic==0.42.0
+
+# ----------------------------------------------------------------
+# Database & Storage
+# ----------------------------------------------------------------
+# Supabase client for PostgreSQL
+supabase==2.16.1
+
+# PostgreSQL adapter (supabase dependency)
+psycopg2-binary==2.9.10
+
+# ----------------------------------------------------------------
+# HTTP & API
+# ----------------------------------------------------------------
+# HTTP client (used by anthropic and supabase)
+httpx==0.28.1
+
+# Requests library for HTTP calls
+requests==2.32.3
+
+# ----------------------------------------------------------------
+# Environment & Configuration
+# ----------------------------------------------------------------
+# Load environment variables from .env files
+python-dotenv==1.0.1
+
+# ----------------------------------------------------------------
+# Email (Optional - for SendGrid)
+# ----------------------------------------------------------------
+# Uncomment if using SendGrid for email
+# sendgrid==6.11.0
+
+# ----------------------------------------------------------------
+# SMS (Optional - for Twilio)
+# ----------------------------------------------------------------
+# Uncomment if using Twilio for SMS
+# twilio==9.4.0
+
+# ----------------------------------------------------------------
+# Payments (Optional - for Stripe)
+# ----------------------------------------------------------------
+# Uncomment if using Stripe for payments
+# stripe==11.4.0
+
+# ----------------------------------------------------------------
+# Cloud Storage (Optional - for Cloudinary)
+# ----------------------------------------------------------------
+# Uncomment if using Cloudinary for media
+# cloudinary==1.41.0
+
+# ----------------------------------------------------------------
+# Testing & Development
+# ----------------------------------------------------------------
+# pytest - Testing framework
+pytest==8.3.4
+pytest-asyncio==0.25.2
+pytest-cov==6.0.0
+
+# httpx test client for FastAPI
+httpx==0.28.1
+
+# ----------------------------------------------------------------
+# Code Quality
+# ----------------------------------------------------------------
+# Black - Code formatter
+black==24.10.0
+
+# Ruff - Fast Python linter
+ruff==0.9.1
+
+# MyPy - Static type checker
+mypy==1.14.1
+
+# ----------------------------------------------------------------
+# Utilities
+# ----------------------------------------------------------------
+# Python standard library type hints backport
+typing-extensions==4.12.2
+
+# JSON Web Tokens (for authentication)
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# ----------------------------------------------------------------
+# Production & Monitoring (Optional)
+# ----------------------------------------------------------------
+# Uncomment for production deployment
+
+# Gunicorn - Production WSGI server
+# gunicorn==23.0.0
+
+# Sentry - Error tracking
+# sentry-sdk==2.21.0
+
+# Python-multipart - For file uploads
+python-multipart==0.0.20
+
+# ----------------------------------------------------------------
+# Version Pinning Notes
+# ----------------------------------------------------------------
+# All versions are pinned for reproducibility
+# Update with caution and test thoroughly
+#
+# To update all packages:
+#   pip install --upgrade -r requirements.txt
+#
+# To check for outdated packages:
+#   pip list --outdated
+#
+# To generate this file from current environment:
+#   pip freeze > requirements.txt
+# ----------------------------------------------------------------
