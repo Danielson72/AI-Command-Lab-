@@ -1,0 +1,327 @@
+# BeatSlave Market Brand Configuration for CQI System
+
+brand:
+  id: beatslave
+  name: "BeatSlave Market"
+  legal_name: "BeatSlave Music Production"
+  tagline: "Where Producers Find Their Sound"
+
+  websites:
+    primary: "BeatSlaveMarket.com"
+    marketplace: true  # Beat marketplace + custom production
+
+  contact:
+    email: "beats@beatslave.com"
+    support: "support@beatslave.com"
+    custom: "custom@beatslave.com"
+
+  branding:
+    tone: "Creative, professional, music-industry savvy"
+    vibe: "Premium beats, artist-friendly service"
+
+services:
+  beat_production:
+    name: "Custom Beat Production"
+    description: "Original beats crafted to your specifications"
+    duration_base: 2  # weeks
+    pricing:
+      basic: 150
+      standard: 300
+      premium: 500
+      exclusive: 1000
+    includes:
+      basic:
+        - "1 custom beat"
+        - "MP3 + WAV files"
+        - "Lease license"
+        - "1 revision round"
+      standard:
+        - "1 custom beat"
+        - "Tracked stems"
+        - "Lease or exclusive license"
+        - "2 revision rounds"
+      premium:
+        - "1 custom beat"
+        - "Tracked stems + MIDI"
+        - "Exclusive license"
+        - "Unlimited revisions"
+        - "Priority production"
+      exclusive:
+        - "1 custom beat"
+        - "Full production package"
+        - "Exclusive rights"
+        - "Unlimited revisions"
+        - "1-on-1 sessions"
+
+  mixing_mastering:
+    name: "Mixing & Mastering"
+    description: "Professional mixing and mastering services"
+    duration_base: 1  # week
+    pricing:
+      mixing_only: 200
+      mastering_only: 75
+      mix_and_master: 250
+      album_rate: "custom"
+    includes:
+      mixing:
+        - "Professional mixing"
+        - "Up to 50 tracks"
+        - "2 revision rounds"
+        - "High-quality WAV delivery"
+      mastering:
+        - "Professional mastering"
+        - "Streaming optimized"
+        - "1 revision round"
+        - "Multiple format delivery"
+
+  custom_compositions:
+    name: "Custom Compositions"
+    description: "Original music for film, ads, and content"
+    duration_base: 4  # weeks
+    pricing_model: "custom_quote"
+    pricing:
+      30_second_spot: 500
+      1_minute_spot: 800
+      full_track: 1500
+      score_per_minute: 300
+    includes:
+      - "100% original composition"
+      - "Unlimited revisions"
+      - "Full commercial rights"
+      - "All stems and files"
+      - "Direct collaboration"
+
+  beat_marketplace:
+    name: "Beat Marketplace Licenses"
+    description: "Ready-made beats available for instant licensing"
+    pricing:
+      lease: 30
+      lease_unlimited: 50
+      exclusive: 200
+      premium_exclusive: 500
+    license_types:
+      lease:
+        - "MP3 + WAV files"
+        - "Up to 5,000 streams"
+        - "2,500 sales/free downloads"
+        - "Non-exclusive"
+      exclusive:
+        - "Tracked stems + MIDI"
+        - "Unlimited distribution"
+        - "100% ownership"
+        - "Producer credit required"
+
+trial:
+  name: "Creative Consultation"
+  duration: 30  # minutes
+  price: 0
+  description: "Discuss your sound vision and get recommendations"
+  format: "Video call or phone"
+  includes:
+    - "Sound direction discussion"
+    - "Reference track review"
+    - "Service recommendation"
+    - "Timeline and pricing"
+    - "Beat catalog walkthrough"
+  requirements:
+    - project_description
+    - reference_tracks
+    - budget_range
+    - timeline
+
+cqi_settings:
+  qualification_threshold: 50  # Lower - more creative projects qualify
+  scoring_weights:
+    budget_alignment: 20
+    project_clarity: 25  # Important for music production
+    timeline_realistic: 15
+    decision_authority: 15
+    portfolio_fit: 15
+    engagement_level: 10
+
+  questions:
+    project:
+      - "What type of project are you working on? (album, single, film, etc.)"
+      - "What genre(s) are you targeting?"
+      - "Do you have reference tracks that capture the sound you want?"
+      - "Is this for commercial release, personal use, or content creation?"
+
+    experience:
+      - "Have you released music before?"
+      - "Do you have existing material we can hear?"
+      - "Are you signed or independent?"
+
+    budget:
+      - "What's your production budget for this project?"
+      - "Looking for ready-made beats or custom production?"
+      - "Need just beats, or mixing/mastering too?"
+
+    timeline:
+      - "When do you need the final product?"
+      - "Is there a release date or deadline?"
+      - "How soon can you start?"
+
+    rights:
+      - "Do you need exclusive rights or is lease okay?"
+      - "Will this be commercially released?"
+      - "Monetizing on streaming platforms?"
+
+templates:
+  welcome_email:
+    subject: "Welcome to BeatSlave - Let's Create Your Sound"
+    body: |
+      Hey {first_name},
+
+      Welcome to BeatSlave Market! We're stoked you're here.
+
+      Whether you need:
+      - Custom beats crafted to your exact vision
+      - Professional mixing and mastering
+      - Exclusive licenses from our catalog
+
+      ...we've got you covered with industry-quality production.
+
+      Next steps:
+      1. Quick questions about your project (3 minutes)
+      2. We'll match you to the right service
+      3. Schedule your free creative consultation
+      4. Get a custom quote and timeline
+
+      Browse our beat catalog: BeatSlaveMarket.com/beats
+
+      Questions? Hit reply or email beats@beatslave.com
+
+      Let's make something fire,
+      The BeatSlave Team 🎵
+
+  consultation_confirmation:
+    subject: "Your BeatSlave Creative Consultation is Booked!"
+    body: |
+      Hey {first_name},
+
+      Your free consultation is confirmed:
+
+      📅 Date: {consultation_date}
+      ⏰ Time: {consultation_time}
+      💬 Format: {call_type} (Zoom/Phone)
+      🎯 Focus: {project_type}
+
+      Before the call:
+      ✅ Gather your reference tracks
+      ✅ List your must-have elements
+      ✅ Think about your budget range
+      ✅ Have your timeline ready
+
+      We'll discuss:
+      - Your sound vision
+      - Best approach (custom vs catalog)
+      - Timeline and pricing
+      - Next steps
+
+      Call link: {call_link}
+      Confirmation Code: {confirmation_code}
+
+      Need to reschedule? Email custom@beatslave.com
+
+      See you {consultation_date}!
+      BeatSlave Team
+
+      P.S. Browse beats before our call: BeatSlaveMarket.com/beats
+
+pricing_strategy:
+  package_deals:
+    album_package:
+      description: "10 beats + mixing/mastering"
+      price: 2500
+      savings: "Save $1,000+"
+
+    ep_package:
+      description: "5 beats + mixing/mastering"
+      price: 1200
+      savings: "Save $500+"
+
+  bulk_licensing:
+    three_leases: 0.20  # 20% off
+    five_leases: 0.30
+    ten_leases: 0.40
+
+  subscription_model:
+    monthly_lease:
+      price: 99
+      includes: "3 lease beats per month"
+
+    monthly_exclusive:
+      price: 299
+      includes: "1 exclusive beat per month"
+
+  loyalty_rewards:
+    repeat_customer: 0.10  # 10% off subsequent orders
+    referral_bonus: 50  # credit for referrals
+
+objection_handlers:
+  price:
+    trigger: "too expensive|cheaper beats|free beats"
+    response: |
+      I get it - there are cheaper (and free) options out there. Here's the
+      real talk: You'll spend hours searching for the right sound, dealing with
+      low-quality files, unclear licensing, and beats that 100 other artists
+      have. Our beats are professionally produced, clearly licensed, and
+      customizable. Plus, your project deserves better than generic. What's
+      your music worth to you?
+
+  diy:
+    trigger: "make my own|learning production|do it myself"
+    response: |
+      Respect! Learning production is awesome. But let's be real - it takes
+      years to get professional quality. Meanwhile, your music career is
+      waiting. Most successful artists use a mix: Buy beats now while building
+      skills, then transition to full production later. Don't let beats be the
+      bottleneck stopping your releases.
+
+  comparison:
+    trigger: "other producers|BeatStars|Type Beat"
+    response: |
+      Smart to shop around! Here's what sets us apart: 1) Custom production
+      - we don't just sell type beats, we create YOUR sound, 2) Direct
+      communication - work directly with producers, no middleman, 3) Unlimited
+      revisions on custom work, 4) Fast turnaround. Type beats are cool for
+      practice, but custom beats make you stand out. What's more important:
+      sounding like everyone else or having a unique sound?
+
+  licensing:
+    trigger: "licensing|rights|exclusive|can i"
+    response: |
+      Great question - licensing is crucial! Here's the breakdown:
+
+      LEASE: Non-exclusive, perfect for singles/mixtapes, affordable
+      EXCLUSIVE: 100% yours, no one else can use it, full commercial rights
+
+      All licenses are clearly spelled out in writing. You own your vocals and
+      lyrics always. We just retain rights to the beat (unless exclusive).
+      Need help deciding? I can recommend based on your release plans.
+
+  quality:
+    trigger: "good enough|professional|industry standard"
+    response: |
+      Our producers have credits with {insert_notable_artists}, and our beats
+      are used on major streaming platforms. We mix/master to industry
+      standards (-14 LUFS for streaming). Want proof? Check our portfolio,
+      listen to the previews, or read reviews from artists who've worked with
+      us. Quality is our reputation - we don't cut corners.
+
+  timeline:
+    trigger: "how long|need it fast|urgent|asap"
+    response: |
+      Timeline depends on the service:
+      - Marketplace beats: Instant download after purchase
+      - Custom beats: 1-2 weeks standard, rush available
+      - Mixing/Mastering: 5-7 days, rush 2-3 days
+
+      Rush service available for +50%. We deliver quality on time, every time.
+      When's your deadline? Let's see if we can make it work.
+
+metadata:
+  created: 2025-10-29
+  author: Daniel Alvarez
+  version: 1.0.0
+  status: active

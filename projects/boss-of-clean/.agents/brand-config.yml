@@ -1,0 +1,290 @@
+# Boss of Clean Brand Configuration for CQI System
+
+brand:
+  id: boss-of-clean
+  name: "Boss of Clean"
+  legal_name: "Boss of Clean, LLC"
+  tagline: "Purrfection is Our Standard"
+  mascot: "Professional cat CEO (glasses, suit, tie)"
+
+  websites:
+    primary: "BossOfClean.com"
+    marketplace: true  # Provider marketplace model
+
+  contact:
+    phone: "407-461-6039"
+    email: "hello@bossofclean.com"
+    support: "support@bossofclean.com"
+    providers: "providers@bossofclean.com"
+
+  branding:
+    colors:
+      primary: "#2C5F2D"  # Professional green
+      secondary: "#97BC62"  # Lighter green
+    tone: "Professional yet approachable, with subtle cat puns"
+
+services:
+  pressure_washing:
+    name: "Pressure Washing"
+    description: "High-pressure cleaning for driveways, patios, and surfaces"
+    duration_base: 120  # minutes
+    pricing_model: "per_sqft"
+    pricing:
+      driveway: 0.30  # per sqft
+      patio: 0.25
+      deck: 0.35
+      siding: 0.20
+      minimum: 150
+    includes:
+      - "High-pressure cleaning"
+      - "Pre-treatment for stains"
+      - "Professional equipment"
+      - "Eco-friendly detergents"
+      - "Post-cleaning inspection"
+
+  soft_washing:
+    name: "Soft Washing"
+    description: "Low-pressure cleaning for delicate surfaces"
+    duration_base: 90
+    pricing_model: "per_sqft"
+    pricing:
+      roof: 0.40
+      siding: 0.25
+      fence: 0.20
+      minimum: 200
+    includes:
+      - "Biodegradable cleaning solutions"
+      - "Safe for all surfaces"
+      - "Algae and mildew removal"
+      - "Long-lasting results"
+
+  driveway_cleaning:
+    name: "Driveway Cleaning"
+    description: "Restore your driveway to like-new condition"
+    duration_base: 90
+    pricing:
+      single_car: 99
+      double_car: 149
+      three_car: 199
+      commercial: "custom"
+    includes:
+      - "Oil stain removal"
+      - "Tire mark removal"
+      - "Weed treatment"
+      - "Sealing (add-on available)"
+
+  roof_cleaning:
+    name: "Roof Cleaning"
+    description: "Safe roof cleaning to extend roof life"
+    duration_base: 120
+    pricing_model: "per_sqft"
+    pricing:
+      shingle: 0.40
+      tile: 0.45
+      metal: 0.35
+      minimum: 300
+    includes:
+      - "Soft wash method (no damage)"
+      - "Moss and algae removal"
+      - "Gutter debris clearing"
+      - "Before/after photos"
+
+  commercial_cleaning:
+    name: "Commercial Property Cleaning"
+    description: "Large-scale pressure washing for businesses"
+    duration_base: 240
+    pricing_model: "custom_quote"
+    includes:
+      - "Parking lots"
+      - "Building exteriors"
+      - "Sidewalks"
+      - "Dumpster areas"
+      - "Flexible scheduling"
+
+trial:
+  name: "Free On-Site Estimate"
+  duration: 45  # minutes
+  price: 0
+  description: "Professional assessment with instant quote"
+  includes:
+    - "Property inspection"
+    - "Surface condition assessment"
+    - "Customized quote"
+    - "Before/after examples"
+    - "Timeline discussion"
+  requirements:
+    - address
+    - service_type
+    - property_photos_optional
+    - preferred_date_range
+
+cqi_settings:
+  qualification_threshold: 60  # Lower than SOTSVC (more leads qualified)
+  scoring_weights:
+    budget_alignment: 30  # Higher weight - pressure washing varies greatly
+    urgency: 15
+    decision_authority: 20
+    property_fit: 20  # Important for this business
+    engagement_level: 10
+    contact_quality: 5
+
+  questions:
+    property:
+      - "What surface do you need cleaned? (driveway, roof, siding, etc.)"
+      - "Approximate square footage or property size?"
+      - "When was it last professionally cleaned?"
+      - "Any specific stains or problem areas?"
+
+    budget:
+      - "Have you gotten quotes from other companies?"
+      - "What's your budget range for this project?"
+      - "Looking for one-time service or ongoing maintenance?"
+
+    urgency:
+      - "When do you need this completed?"
+      - "Is this for an event, sale, or general maintenance?"
+
+    decision:
+      - "Are you the property owner or decision-maker?"
+      - "Do you need approval from HOA or property management?"
+
+templates:
+  welcome_email:
+    subject: "Boss of Clean - Let's Make Your Property Purr-fect!"
+    body: |
+      Hi {first_name},
+
+      Thanks for reaching out to Boss of Clean! We're the area's premier
+      pressure washing service, and we're excited to help restore your
+      property to pristine condition.
+
+      What happens next:
+      1. Quick questions to understand your needs (2 minutes)
+      2. We'll recommend the best cleaning approach
+      3. Schedule your free on-site estimate
+      4. Get your customized quote on the spot
+
+      Our guarantee: "Purrfection is Our Standard" - if you're not 100%
+      satisfied, we'll make it right.
+
+      Questions? Call/text us at 407-461-6039
+
+      Let's get cleaning!
+      The Boss of Clean Team 🐱
+
+  estimate_confirmation:
+    subject: "Your Free Boss of Clean Estimate is Scheduled!"
+    body: |
+      Hi {first_name},
+
+      Excellent! Your free on-site estimate is confirmed:
+
+      📅 Date: {estimate_date}
+      ⏰ Time: {estimate_time}
+      📍 Address: {address}
+      🎯 Service: {service_type}
+
+      What to expect:
+      - Our pro will inspect your property
+      - Assess the surfaces and condition
+      - Provide an instant, detailed quote
+      - Show before/after examples
+      - Answer all your questions
+
+      Confirmation Code: {confirmation_code}
+      Cost: FREE - No obligation
+
+      Need to reschedule? Text/call 407-461-6039
+
+      See you {estimate_date}!
+      Boss of Clean Team
+
+      P.S. Have photos? Send them beforehand for an even faster estimate!
+
+pricing_strategy:
+  maintenance_plans:
+    quarterly:
+      discount: 0.20  # 20% off per service
+      description: "Keep it clean year-round"
+
+    biannual:
+      discount: 0.15
+      description: "Spring and fall cleaning"
+
+  package_deals:
+    driveway_and_house: 0.15  # 15% off when bundling
+    full_property: 0.25  # 25% off for complete property
+
+  seasonal_promotions:
+    spring_cleaning: 0.10
+    fall_prep: 0.10
+    hoa_group_discount: 0.20  # For neighborhood bookings
+
+  add_ons:
+    sealing: "+$0.50 per sqft"
+    gutter_cleaning: "+$150"
+    window_cleaning: "+$5 per window"
+
+objection_handlers:
+  price:
+    trigger: "too expensive|cheaper option|high price"
+    response: |
+      I understand! Pressure washing prices vary widely. Here's the difference:
+      We use professional-grade equipment, eco-friendly products, and we're
+      fully insured. Cheaper options often use residential equipment that
+      damages surfaces or takes 3x longer. Plus, we guarantee our work - if
+      you're not happy, we re-clean for free. Quality work costs a bit more
+      upfront but saves you money long-term.
+
+  diy:
+    trigger: "do it myself|rent a machine|already have"
+    response: |
+      Great DIY spirit! Just know that improper pressure washing can cause
+      $1,000s in damage - etched concrete, stripped paint, or broken siding.
+      Our pros know the right pressure, angle, and detergents for each surface.
+      Plus, we're insured if anything goes wrong. Consider: rent a machine
+      ($100+), buy cleaning solution ($50+), spend your whole weekend, and
+      risk damage... or have us do it professionally. What's your time worth?
+
+  trust:
+    trigger: "reviews|references|licensed|insured"
+    response: |
+      Excellent question! We're fully licensed and insured (we'll show proof).
+      Check our reviews on BossOfClean.com and Google. We've cleaned hundreds
+      of properties in Central Florida. Want references? We can connect you
+      with customers in your neighborhood. Plus, we provide before/after photos
+      and a satisfaction guarantee.
+
+  timing:
+    trigger: "not ready|maybe later|let me think"
+    response: |
+      No pressure! (Well, except for the washing 😊) Can I ask what you're
+      considering? If it's budget, schedule, or scope, I can address that now.
+      Also worth knowing: The longer you wait, the deeper stains set in and
+      the harder (more expensive) they are to remove. We're booking about
+      {lead_time} out right now.
+
+  weather:
+    trigger: "rain|weather|season"
+    response: |
+      Good thinking! We actually work in most weather conditions. Light rain
+      doesn't affect our work (we're using water anyway!). We'll reschedule
+      if there's lightning or heavy storms. Best time to pressure wash in
+      Florida is fall/winter/spring - less rain, cooler temps, surfaces dry
+      faster. But we work year-round!
+
+marketplace_settings:
+  provider_network: true
+  auto_assign: true
+  assignment_criteria:
+    - Service area match
+    - Availability
+    - Rating (4.5+ stars)
+    - Equipment capability
+    - Insurance status
+
+metadata:
+  created: 2025-10-29
+  author: Daniel Alvarez
+  version: 1.0.0
+  status: active

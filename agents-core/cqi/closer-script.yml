@@ -1,0 +1,235 @@
+# Closer Script Agent
+# Generates personalized closing scripts for trial-to-paid conversions
+
+name: closer-script
+version: 1.0.0
+type: generator
+priority: high
+
+description: |
+  AI-powered closer script generator that creates personalized talking points,
+  objection handlers, and pricing strategies based on CQI data and trial outcomes.
+
+script_structure:
+  sections:
+    - greeting:
+        purpose: Warm opening, recap trial experience
+        duration: 30-60 seconds
+
+    - value_recap:
+        purpose: Remind of benefits experienced during trial
+        duration: 1-2 minutes
+
+    - pricing_presentation:
+        purpose: Present service packages and pricing
+        duration: 2-3 minutes
+
+    - objection_handling:
+        purpose: Address concerns proactively
+        duration: 1-2 minutes
+
+    - close:
+        purpose: Ask for the sale, schedule first service
+        duration: 1-2 minutes
+
+    - next_steps:
+        purpose: Payment setup, scheduling, onboarding
+        duration: 1-2 minutes
+
+generation_inputs:
+  from_cqi:
+    - qualification_score
+    - budget_range
+    - urgency_level
+    - decision_authority
+    - pain_points_mentioned
+    - competitor_research
+
+  from_trial:
+    - trial_date
+    - services_performed
+    - client_feedback
+    - concerns_raised
+    - enthusiasm_level
+    - property_details
+
+  from_brand:
+    - service_packages
+    - pricing_tiers
+    - promotions_active
+    - guarantee_terms
+    - upsell_opportunities
+
+script_templates:
+  sotsvc_residential:
+    greeting: |
+      "Hi {first_name}, it's {agent_name} from SOTSVC! I wanted to follow up
+      on your trial cleaning from {trial_date}. How did everything look?"
+
+    value_recap: |
+      "I'm glad to hear that! So you experienced our {service_type} where we
+      {specific_tasks}. That's exactly what you'll get every time - consistent,
+      thorough cleaning with our 'YOU'RE CLEAN OR YOU'RE DIRTY' guarantee."
+
+    pricing_options:
+      weekly:
+        price: "{weekly_price}"
+        pitch: "Our most popular option - keeps your home consistently clean"
+        savings: "Save 20% vs one-time cleanings"
+
+      biweekly:
+        price: "{biweekly_price}"
+        pitch: "Perfect balance of maintenance and affordability"
+        savings: "Save 15% vs one-time cleanings"
+
+      monthly:
+        price: "{monthly_price}"
+        pitch: "Great for maintenance cleaning"
+        savings: "Save 10% vs one-time cleanings"
+
+    objection_handlers:
+      price_concern: |
+        "I understand budget is important. Let me ask - how much time do you
+        spend cleaning each week? If it's even 3 hours, that's 12 hours a month.
+        What's your hourly worth? Our {recommended_package} actually saves you
+        money when you factor in your time."
+
+      need_to_think: |
+        "Absolutely, this is an important decision. Can I ask what specifically
+        you'd like to think about? If it's [pricing/scheduling/scope], let me
+        see if I can address that right now so you have all the info."
+
+      compare_competitors: |
+        "Smart to do research! Many of our clients compared options too. They
+        chose us because: [1] We're licensed and insured, [2] Same team every
+        time, [3] Our guarantee - if you're not happy, we re-clean for free.
+        What's most important to you?"
+
+    close: |
+      "Based on what you've told me, I think our {recommended_package} at
+      {price} is perfect for you. I have availability {date_options}.
+      Which works better for your first regular cleaning?"
+
+    next_steps: |
+      "Perfect! I'll get you scheduled for {chosen_date}. I'll send you:
+       1. Service agreement (super simple, cancel anytime)
+       2. Payment link (autopay for convenience)
+       3. Confirmation with your team's info
+
+       Sound good? {First_name}, you made a great choice. We'll take excellent
+       care of your home."
+
+  boss_of_clean_pressure_washing:
+    greeting: |
+      "Hi {first_name}, this is {agent_name} from Boss of Clean. Thanks for
+      having us out for the estimate on {trial_date}. Have you had a chance
+      to review our proposal?"
+
+    value_recap: |
+      "Great! So we're looking at {service_list} for a total of {sq_ft} square
+      feet. Based on {condition_assessment}, we'd use our {method} process to
+      get everything looking like new."
+
+    pricing_options:
+      one_time:
+        price: "{total_price}"
+        pitch: "Complete service, pay as you go"
+
+      maintenance_plan:
+        price: "{annual_price}"
+        pitch: "Quarterly service, keep property pristine year-round"
+        savings: "Save {discount_percent}% vs one-time bookings"
+        includes:
+          - "Priority scheduling"
+          - "Pre-season treatment"
+          - "Storm response available"
+
+    close: |
+      "I can get you on the schedule for {date_options}. We're booking about
+      {lead_time} out right now, so I'd recommend securing your spot. Which
+      date works for you?"
+
+personalization_variables:
+  - first_name
+  - last_name
+  - agent_name
+  - trial_date
+  - service_type
+  - specific_tasks
+  - property_details
+  - pain_points
+  - budget_range
+  - recommended_package
+  - price
+  - date_options
+  - competitor_mentions
+
+actions:
+  generate_script:
+    input:
+      - lead_id: uuid
+      - trial_id: uuid
+      - brand: string
+      - agent_name: string
+
+    process:
+      1. Fetch CQI data and trial outcome
+      2. Select appropriate template
+      3. Populate personalization variables
+      4. Generate objection handlers based on concerns
+      5. Calculate pricing recommendations
+      6. Format script for readability
+
+    output:
+      - closer_script_id: uuid
+      - script_content: text (markdown)
+      - recommended_package: string
+      - pricing_options: array
+      - objection_handlers: array
+      - estimated_duration: integer (minutes)
+
+  export_script:
+    formats:
+      - markdown
+      - pdf
+      - html
+      - email_draft
+
+    delivery:
+      - Send to agent email
+      - Store in Supabase
+      - Display in dashboard
+
+database_schema:
+  table: public.closer_scripts
+  columns:
+    - id: uuid
+    - lead_id: uuid
+    - trial_id: uuid
+    - brand: string
+    - agent_name: string
+    - script_content: text
+    - script_template: string
+    - recommended_package: string
+    - pricing_options: jsonb
+    - objection_handlers: jsonb
+    - generated_at: timestamptz
+    - used_at: timestamptz
+    - outcome: enum (converted|declined|rescheduled)
+    - notes: text
+
+integrations:
+  supabase:
+    tables:
+      - public.closer_scripts (write)
+      - public.cqi_responses (read)
+      - public.trials (read)
+
+  notifications:
+    - Email script to closing agent
+    - SMS link to mobile-friendly version
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

@@ -1,0 +1,283 @@
+# Session Closer Agent
+# Handles graceful session termination and cleanup
+
+name: session-closer
+version: 1.0.0
+type: system
+priority: high
+
+description: |
+  Manages the proper closing of CQI sessions, ensures data persistence,
+  cleanup of resources, and triggers appropriate follow-up actions.
+
+responsibilities:
+  - Session state finalization
+  - Data persistence verification
+  - Resource cleanup
+  - Follow-up task creation
+  - Notification scheduling
+  - Cache invalidation
+
+session_lifecycle:
+  states:
+    - initiated: Session started, data collection in progress
+    - scored: Lead scored, decision made
+    - actioned: Trial scheduled OR nurture/disqualify path set
+    - documented: Audit report generated
+    - closed: Session complete, resources released
+    - archived: Session moved to historical storage
+
+  transitions:
+    initiated -> scored:
+      trigger: CQI scorer completes
+      validation: Score between 0-100
+
+    scored -> actioned:
+      trigger: Conductor makes routing decision
+      validation: Action assigned (trial|nurture|disqualify)
+
+    actioned -> documented:
+      trigger: Audit report agent completes
+      validation: Audit report ID exists
+
+    documented -> closed:
+      trigger: All agents confirm completion
+      validation: All data persisted
+
+    closed -> archived:
+      trigger: 90 days after session close
+      validation: No pending actions
+
+closing_checklist:
+  data_persistence:
+    - Verify lead data saved to public.leads
+    - Confirm CQI responses in public.cqi_responses
+    - Check trial record if applicable (public.trials)
+    - Validate closer script if generated (public.closer_scripts)
+    - Ensure audit report stored (public.audit_reports)
+
+  notification_scheduling:
+    - Queue follow-up emails
+    - Schedule reminder SMS
+    - Create calendar events
+    - Notify assigned agents
+
+  resource_cleanup:
+    - Clear session cache
+    - Release agent locks
+    - Close database connections
+    - Free memory allocations
+
+  task_creation:
+    - Create follow-up tasks for human agents
+    - Schedule automated workflows
+    - Set reminder dates
+    - Assign ownership
+
+actions:
+  close_session:
+    input:
+      - session_id: uuid
+      - lead_id: uuid
+      - outcome: string (trial|nurture|disqualify)
+      - conductor_report: object
+
+    process:
+      1. Run closing checklist
+      2. Validate all data persisted
+      3. Schedule follow-up actions
+      4. Send notifications
+      5. Clean up resources
+      6. Update session state to 'closed'
+      7. Log closure event
+
+    output:
+      - closure_status: string (success|partial|failed)
+      - data_validation: object
+      - scheduled_tasks: array
+      - errors: array (if any)
+
+  validate_session_data:
+    input:
+      - session_id: uuid
+
+    checks:
+      - lead_exists: Query public.leads
+      - responses_saved: Query public.cqi_responses
+      - score_recorded: Verify score in range
+      - action_assigned: Check outcome set
+      - audit_generated: Verify audit report
+
+    output:
+      - valid: boolean
+      - missing_data: array
+      - recommendations: array
+
+  schedule_follow_up:
+    input:
+      - lead_id: uuid
+      - follow_up_type: string (email|sms|call|automated)
+      - schedule_date: timestamptz
+      - message: string
+
+    process:
+      1. Create follow-up record
+      2. Queue in notification system
+      3. Assign to agent if manual
+      4. Set reminder if needed
+
+    output:
+      - follow_up_id: uuid
+      - scheduled_for: timestamptz
+      - assigned_to: string
+
+  cleanup_session_resources:
+    input:
+      - session_id: uuid
+
+    actions:
+      - Clear conductor cache for session
+      - Release agent allocations
+      - Close temp files
+      - Invalidate session tokens
+      - Free database connections
+
+    output:
+      - resources_released: boolean
+      - cleanup_time: integer (ms)
+
+follow_up_workflows:
+  trial_scheduled:
+    immediate:
+      - Send trial confirmation email
+      - Send SMS confirmation
+      - Create calendar event
+
+    24_hours_before:
+      - Email reminder
+      - SMS reminder
+
+    2_hours_before:
+      - SMS reminder
+
+    1_hour_after:
+      - Request feedback
+      - Ask about experience
+
+  nurture_sequence:
+    day_1:
+      - Send educational email
+      - Share success story
+
+    day_3:
+      - Send service overview video
+      - Highlight testimonials
+
+    day_7:
+      - Check-in email
+      - Offer to answer questions
+
+    day_14:
+      - Special promotion offer
+      - Last chance to schedule trial
+
+    day_30:
+      - Final follow-up
+      - Move to long-term nurture
+
+  disqualified:
+    immediate:
+      - Send polite thank you
+      - Offer alternative resources
+
+    future:
+      - Add to newsletter (if opted in)
+      - No further automated follow-up
+
+error_handling:
+  partial_closure:
+    description: Some data persisted, some failed
+    action:
+      - Log specific failures
+      - Retry failed operations
+      - Notify operations team
+      - Mark session as 'partial'
+
+  failed_closure:
+    description: Critical failure in closing
+    action:
+      - Rollback partial changes
+      - Keep session in 'actioned' state
+      - Alert engineering team
+      - Create manual review task
+
+  orphaned_sessions:
+    description: Sessions stuck in intermediate state
+    detection: Cron job every hour
+    action:
+      - Attempt automatic recovery
+      - If recovery fails, escalate
+      - Document for pattern analysis
+
+database_schema:
+  table: public.cqi_sessions
+  columns:
+    - id: uuid
+    - lead_id: uuid
+    - brand: string
+    - state: enum (initiated|scored|actioned|documented|closed|archived)
+    - outcome: enum (null|trial|nurture|disqualify)
+    - started_at: timestamptz
+    - closed_at: timestamptz
+    - duration_seconds: integer
+    - conductor_version: string
+    - data_complete: boolean
+    - errors: jsonb
+    - closure_checklist: jsonb
+
+  table: public.follow_up_tasks
+  columns:
+    - id: uuid
+    - lead_id: uuid
+    - session_id: uuid
+    - task_type: string (email|sms|call|automated)
+    - scheduled_for: timestamptz
+    - executed_at: timestamptz
+    - status: enum (pending|sent|failed|cancelled)
+    - message: text
+    - assigned_to: string
+    - metadata: jsonb
+
+monitoring:
+  metrics:
+    - session_close_rate: % successfully closed
+    - avg_close_duration: Time from session end to closure
+    - data_validation_failures: Count and types
+    - cleanup_efficiency: Resources freed per session
+
+  alerts:
+    - orphaned_sessions > 5: Manual review needed
+    - closure_failure_rate > 5%: System issue
+    - avg_close_duration > 30s: Performance degradation
+
+integrations:
+  supabase:
+    tables:
+      - public.cqi_sessions (write)
+      - public.follow_up_tasks (write)
+      - All CQI tables (read for validation)
+
+  notification_system:
+    - Queue emails via edge function
+    - Schedule SMS (future)
+    - Create calendar events
+
+  workflow_engine:
+    - Trigger automated sequences
+    - Start nurture campaigns
+    - Schedule callbacks
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

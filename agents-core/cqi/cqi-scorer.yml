@@ -1,0 +1,132 @@
+# CQI Scorer Agent
+# Calculates lead qualification scores using weighted criteria
+
+name: cqi-scorer
+version: 1.0.0
+type: analyzer
+priority: high
+
+description: |
+  Intelligent scoring engine for lead qualification.
+  Uses weighted criteria and brand-specific thresholds to determine
+  lead quality and recommend next actions.
+
+scoring_model:
+  total_score: 100
+  passing_threshold: 70  # Default, overridden by brand config
+
+  criteria:
+    - name: budget_alignment
+      weight: 25
+      questions:
+        - "What is your budget range for this service?"
+        - "When do you need this completed?"
+      scoring:
+        high: 25      # Budget matches service pricing
+        medium: 15    # Budget slightly below
+        low: 5        # Budget too low
+
+    - name: urgency
+      weight: 20
+      questions:
+        - "How soon do you need this service?"
+        - "Is this project time-sensitive?"
+      scoring:
+        high: 20      # Immediate need (< 7 days)
+        medium: 12    # Near-term (7-30 days)
+        low: 5        # Future (> 30 days)
+
+    - name: decision_authority
+      weight: 20
+      questions:
+        - "Are you the decision-maker for this project?"
+        - "Do you need approval from anyone else?"
+      scoring:
+        high: 20      # Sole decision-maker
+        medium: 12    # Shared decision
+        low: 5        # Not decision-maker
+
+    - name: fit_quality
+      weight: 15
+      questions:
+        - "Have you used similar services before?"
+        - "What are your specific needs?"
+      scoring:
+        high: 15      # Perfect fit for services
+        medium: 10    # Good fit with minor concerns
+        low: 3        # Poor fit
+
+    - name: engagement_level
+      weight: 10
+      questions:
+        - "How did you hear about us?"
+        - "Have you visited our website?"
+      scoring:
+        high: 10      # Highly engaged (referral, research)
+        medium: 6     # Moderate (web search, ad)
+        low: 2        # Low (cold, minimal research)
+
+    - name: contact_quality
+      weight: 10
+      questions:
+        - "Is this your preferred contact method?"
+        - "Best time to reach you?"
+      scoring:
+        high: 10      # Complete contact info, responsive
+        medium: 6     # Partial info
+        low: 2        # Minimal info, unresponsive
+
+outputs:
+  - total_score: integer (0-100)
+  - category_breakdown: object
+  - recommendation: string (trial|nurture|disqualify)
+  - reasoning: string
+  - red_flags: array
+  - green_flags: array
+
+actions:
+  score_lead:
+    input:
+      - lead_id: uuid
+      - responses: object  # CQI Q&A responses
+      - brand: string
+
+    process:
+      1. Load brand-specific scoring weights
+      2. Analyze responses for each criterion
+      3. Apply weighted scoring algorithm
+      4. Identify flags and patterns
+      5. Generate recommendation with reasoning
+
+    output:
+      - qualification_score object
+      - stored in public.cqi_responses
+
+  generate_feedback:
+    description: Provide human-readable scoring explanation
+    output: |
+      "Based on your responses, you scored 85/100:
+       ✓ Budget aligns with our services (25/25)
+       ✓ Urgent timeline matches our availability (18/20)
+       ✓ Decision authority confirmed (20/20)
+       ⚠ First-time user of professional services (10/15)
+       ✓ High engagement via referral (10/10)
+       ✓ Complete contact information (10/10)
+
+       Recommendation: QUALIFIED FOR TRIAL
+       Next Step: Schedule 60-minute trial cleaning"
+
+integrations:
+  supabase:
+    tables:
+      - public.cqi_responses (write)
+      - public.cqi_templates (read)
+
+  conductor:
+    sends: qualification_score
+    receives: lead_data, responses
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

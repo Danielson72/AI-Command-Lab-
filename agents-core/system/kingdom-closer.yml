@@ -1,0 +1,326 @@
+# Kingdom Closer Agent
+# System-wide shutdown and emergency operations manager
+
+name: kingdom-closer
+version: 1.0.0
+type: system
+priority: critical
+
+description: |
+  Master shutdown coordinator that handles graceful system termination,
+  emergency shutdowns, maintenance mode transitions, and disaster recovery.
+  Named "Kingdom Closer" as the ultimate authority that can shut down
+  the entire CQI system kingdom when necessary.
+
+responsibilities:
+  - Graceful system shutdown
+  - Emergency shutdown (immediate)
+  - Maintenance mode activation
+  - Active session preservation
+  - Data integrity verification
+  - Disaster recovery coordination
+
+shutdown_types:
+  graceful:
+    description: Planned shutdown with session completion
+    use_cases:
+      - Scheduled maintenance
+      - System upgrades
+      - Configuration changes
+
+    process:
+      1. Announce shutdown to all agents
+      2. Stop accepting new sessions
+      3. Allow active sessions to complete (timeout: 15 min)
+      4. Close remaining sessions gracefully
+      5. Persist all in-flight data
+      6. Release resources
+      7. Verify data integrity
+      8. Log shutdown completion
+      9. Exit system
+
+    duration: 15-30 minutes
+
+  immediate:
+    description: Fast shutdown, save state and exit
+    use_cases:
+      - System overload
+      - Critical bugs detected
+      - Security threats
+
+    process:
+      1. Broadcast emergency shutdown
+      2. Pause all active sessions
+      3. Quick-save all session states
+      4. Flush critical data to database
+      5. Release essential resources
+      6. Log emergency details
+      7. Exit system
+
+    duration: 30-60 seconds
+
+  emergency:
+    description: Instantaneous shutdown, no guarantees
+    use_cases:
+      - Server failure imminent
+      - Data breach detected
+      - Infrastructure collapse
+
+    process:
+      1. Kill all agent processes
+      2. Attempt final database write
+      3. Dump memory state to disk
+      4. Exit immediately
+
+    duration: < 5 seconds
+    data_loss_risk: high
+
+maintenance_mode:
+  purpose: Allow admin operations while blocking user access
+
+  activation_process:
+    1. Stop new session intake
+    2. Complete active sessions
+    3. Switch to maintenance mode
+    4. Display maintenance message to users
+    5. Allow admin/developer access only
+
+  allowed_operations:
+    - Database migrations
+    - Configuration updates
+    - Agent deployment
+    - System diagnostics
+    - Manual data fixes
+
+  maintenance_message:
+    user_facing: |
+      🔧 The CQI system is currently undergoing maintenance.
+      We'll be back shortly! Estimated time: {duration}
+      For urgent inquiries, contact: {emergency_contact}
+
+  deactivation_process:
+    1. Run system health checks
+    2. Verify all agents operational
+    3. Test critical flows
+    4. Switch to full operation mode
+    5. Resume accepting sessions
+
+session_preservation:
+  auto_save:
+    frequency: Every 60 seconds during normal operation
+    on_shutdown: Immediate save of all active sessions
+
+  state_storage:
+    location: public.cqi_session_states
+    format: jsonb
+    includes:
+      - session_id
+      - current_state
+      - agent_stack
+      - pending_actions
+      - partial_responses
+      - context_snapshot
+
+  session_recovery:
+    on_restart:
+      1. Load saved session states
+      2. Validate state integrity
+      3. Offer resume or restart to user
+      4. Apply time-based expiration (sessions > 24h old)
+
+actions:
+  initiate_graceful_shutdown:
+    input:
+      - reason: string
+      - initiated_by: string
+      - max_wait_time: integer (minutes, default: 15)
+
+    process:
+      1. Validate admin authorization
+      2. Announce to all agents
+      3. Set system mode to 'shutting_down'
+      4. Monitor active sessions
+      5. Wait for completion or timeout
+      6. Close remaining sessions
+      7. Run data integrity checks
+      8. Shutdown system
+
+    output:
+      - shutdown_status: string (success|timeout|aborted)
+      - sessions_completed: integer
+      - sessions_force_closed: integer
+      - data_integrity: boolean
+      - shutdown_time: integer (seconds)
+
+  emergency_shutdown:
+    input:
+      - reason: string (required)
+      - severity: enum (critical|severe|moderate)
+
+    process:
+      1. Log emergency reason
+      2. Broadcast to all agents
+      3. Attempt quick-save
+      4. Flush critical data
+      5. Shutdown immediately
+
+    output:
+      - shutdown_executed: boolean
+      - data_saved: boolean
+      - recovery_file: string (path)
+
+  activate_maintenance_mode:
+    input:
+      - reason: string
+      - estimated_duration: integer (minutes)
+      - admin_contact: string
+
+    process:
+      1. Complete active sessions
+      2. Block new sessions
+      3. Set maintenance flag
+      4. Display maintenance message
+      5. Enable admin-only access
+
+    output:
+      - maintenance_active: boolean
+      - sessions_cleared: integer
+      - activation_time: timestamptz
+
+  deactivate_maintenance_mode:
+    process:
+      1. Run health checks
+      2. Verify agent availability
+      3. Test critical workflows
+      4. Remove maintenance flag
+      5. Resume normal operations
+
+    output:
+      - operational: boolean
+      - health_check_results: object
+      - resumed_at: timestamptz
+
+  verify_data_integrity:
+    checks:
+      - All leads have corresponding CQI responses
+      - All trials have valid lead_id references
+      - All scores are in valid range (0-100)
+      - All timestamps are logical
+      - No orphaned records
+
+    process:
+      1. Run integrity queries
+      2. Identify anomalies
+      3. Generate report
+      4. Recommend fixes
+
+    output:
+      - integrity_status: string (pass|warn|fail)
+      - anomalies: array
+      - affected_records: integer
+      - recommended_actions: array
+
+disaster_recovery:
+  backup_triggers:
+    - Before any shutdown
+    - Every 4 hours during operation
+    - Before major configuration changes
+
+  backup_includes:
+    - All database tables
+    - Agent configurations
+    - Session states
+    - System logs
+
+  recovery_procedure:
+    1. Restore database from backup
+    2. Restore agent configs
+    3. Validate data integrity
+    4. Resume saved sessions
+    5. Verify system health
+    6. Resume operations
+
+  rpo_target: 5 minutes (Recovery Point Objective)
+  rto_target: 30 minutes (Recovery Time Objective)
+
+database_schema:
+  table: public.cqi_session_states
+  columns:
+    - id: uuid
+    - session_id: uuid
+    - saved_at: timestamptz
+    - state_data: jsonb
+    - resumable: boolean
+    - expires_at: timestamptz
+
+  table: public.system_events
+  columns:
+    - id: uuid
+    - event_type: string (shutdown|startup|maintenance|emergency)
+    - reason: text
+    - initiated_by: string
+    - severity: string
+    - data: jsonb
+    - timestamp: timestamptz
+
+monitoring:
+  health_indicators:
+    - active_sessions: Monitor count
+    - system_load: CPU, memory usage
+    - database_connections: Connection pool status
+    - agent_responsiveness: Latency checks
+
+  shutdown_triggers:
+    auto_shutdown_conditions:
+      - Memory usage > 95% for 5 minutes
+      - Database connection failures > 10
+      - Critical error rate > 20 per minute
+
+    alert_conditions:
+      - Memory usage > 85%
+      - Active sessions > 100
+      - Error rate increasing rapidly
+
+notifications:
+  shutdown_announcement:
+    to: all_admins@sotsvc.com
+    priority: high
+    channels: [email, slack, sms]
+    message: |
+      ⚠️ CQI SYSTEM SHUTDOWN INITIATED
+      Type: {shutdown_type}
+      Reason: {reason}
+      Initiated by: {user}
+      Time: {timestamp}
+      Active sessions: {count}
+
+  recovery_complete:
+    to: operations@sotsvc.com
+    message: |
+      ✅ CQI System Recovered
+      Downtime: {duration}
+      Sessions restored: {count}
+      Data integrity: {status}
+      System status: Operational
+
+integrations:
+  supabase:
+    - Save session states
+    - Log system events
+    - Verify data integrity
+
+  monitoring:
+    - Send shutdown metrics
+    - Log recovery events
+    - Track downtime
+
+  notification_service:
+    - Alert admins
+    - Update status page
+    - Notify affected users
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active
+  criticality: HIGHEST

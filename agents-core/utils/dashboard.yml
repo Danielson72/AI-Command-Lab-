@@ -1,0 +1,324 @@
+# Dashboard Agent
+# Real-time monitoring and analytics interface
+
+name: dashboard
+version: 1.0.0
+type: utility
+priority: medium
+
+description: |
+  Provides real-time monitoring, analytics, and reporting for CQI system
+  performance. Serves data to frontend dashboards and admin interfaces.
+
+dashboard_views:
+  executive:
+    audience: Leadership, investors
+    metrics:
+      - Total leads processed (today/week/month)
+      - Qualification rate (% of leads qualified)
+      - Trial booking rate
+      - Trial-to-paid conversion rate
+      - Revenue generated
+      - Revenue pipeline
+      - Average deal value
+      - System uptime
+
+    visualizations:
+      - Conversion funnel chart
+      - Revenue trend line
+      - Brand performance comparison
+      - Top performing services
+
+  operations:
+    audience: Operations managers
+    metrics:
+      - Active CQI sessions
+      - Average session duration
+      - Queue depth
+      - Agent utilization
+      - Response times
+      - Trial schedule occupancy
+      - Upcoming trials
+      - Pending follow-ups
+
+    visualizations:
+      - Real-time session monitor
+      - Calendar heat map
+      - Task queue status
+      - Agent performance
+
+  sales:
+    audience: Sales team, closers
+    metrics:
+      - Qualified leads awaiting follow-up
+      - Trials scheduled today
+      - Trials completed awaiting close
+      - Closing scripts generated
+      - Open opportunities
+      - Win/loss reasons
+
+    visualizations:
+      - Lead pipeline
+      - Trial calendar
+      - Opportunity board
+      - Performance leaderboard
+
+  analytics:
+    audience: Data analysts, marketing
+    metrics:
+      - Lead source breakdown
+      - Conversion by source
+      - Time-to-conversion
+      - Score distribution
+      - Drop-off points
+      - Best performing agents
+      - Seasonal trends
+
+    visualizations:
+      - Source attribution chart
+      - Cohort analysis
+      - Funnel optimization
+      - A/B test results
+
+real_time_metrics:
+  system_health:
+    - Current status: operational|degraded|maintenance
+    - Active sessions: integer
+    - Queue depth: integer
+    - Average response time: milliseconds
+    - Error rate: per minute
+    - Uptime: percentage
+
+  performance_today:
+    - Leads processed: integer
+    - CQI sessions completed: integer
+    - Qualification rate: percentage
+    - Trials booked: integer
+    - Revenue generated: currency
+    - Average score: decimal
+
+  alerts:
+    - Active alerts: array
+      - severity: critical|warning|info
+      - message: string
+      - timestamp: timestamptz
+      - acknowledged: boolean
+
+kpis:
+  primary:
+    qualification_rate:
+      formula: (qualified_leads / total_leads) * 100
+      target: 60%
+      calculation: rolling_30_day
+
+    trial_booking_rate:
+      formula: (trials_booked / qualified_leads) * 100
+      target: 75%
+      calculation: rolling_30_day
+
+    trial_to_paid_rate:
+      formula: (paid_conversions / trials_completed) * 100
+      target: 50%
+      calculation: rolling_30_day
+
+    lead_to_paid_rate:
+      formula: (paid_conversions / total_leads) * 100
+      target: 25%
+      calculation: rolling_30_day
+
+  secondary:
+    avg_qualification_score:
+      formula: sum(scores) / count(sessions)
+      target: 65
+      calculation: rolling_7_day
+
+    avg_session_duration:
+      formula: sum(durations) / count(sessions)
+      target: 8 minutes
+      calculation: rolling_7_day
+
+    time_to_trial:
+      formula: avg(trial_date - session_date)
+      target: 3 days
+      calculation: rolling_30_day
+
+    customer_lifetime_value:
+      formula: avg(total_revenue_per_customer)
+      target: varies_by_brand
+      calculation: all_time
+
+actions:
+  get_dashboard_data:
+    input:
+      - view: string (executive|operations|sales|analytics)
+      - brand: string (all|sotsvc|boss-of-clean|beatslave|temple-builder)
+      - time_range: string (today|week|month|quarter|year|custom)
+      - start_date: date (if custom)
+      - end_date: date (if custom)
+
+    process:
+      1. Validate parameters
+      2. Query relevant data from Supabase
+      3. Calculate metrics
+      4. Format for frontend consumption
+      5. Cache result (5 min TTL)
+
+    output:
+      - metrics: object
+      - visualizations: object
+      - alerts: array
+      - last_updated: timestamptz
+
+  get_real_time_feed:
+    description: WebSocket endpoint for live updates
+    events:
+      - new_lead
+      - session_started
+      - session_completed
+      - trial_booked
+      - conversion
+      - alert_raised
+
+    output:
+      - event_type: string
+      - event_data: object
+      - timestamp: timestamptz
+
+  get_lead_details:
+    input:
+      - lead_id: uuid
+
+    output:
+      - lead_info: object
+      - cqi_session: object
+      - trial_info: object
+      - closer_script: object
+      - audit_report: object
+      - timeline: array
+
+  get_performance_report:
+    input:
+      - report_type: string (daily|weekly|monthly)
+      - brand: string
+      - email_to: string (optional)
+
+    process:
+      1. Gather all metrics for period
+      2. Calculate trends vs previous period
+      3. Generate insights
+      4. Format as PDF/HTML
+      5. Email if recipient provided
+
+    output:
+      - report_id: uuid
+      - report_url: string
+      - emailed: boolean
+
+data_sources:
+  supabase_tables:
+    - public.leads
+    - public.cqi_responses
+    - public.cqi_sessions
+    - public.trials
+    - public.closer_scripts
+    - public.audit_reports
+    - public.services
+    - public.follow_up_tasks
+
+  calculated_metrics:
+    - Conversion rates
+    - Averages
+    - Trends
+    - Forecasts
+
+  external_integrations:
+    - Stripe (revenue data)
+    - Calendar (availability)
+    - Email (engagement rates)
+
+caching_strategy:
+  real_time: No cache (WebSocket)
+  dashboard_views: 5 minute cache
+  reports: 1 hour cache
+  analytics: 4 hour cache
+
+  cache_warming:
+    - Pre-generate morning reports at 6 AM
+    - Refresh executive view every 5 minutes
+    - Update operations view every 1 minute
+
+export_formats:
+  - json: For API consumption
+  - csv: For spreadsheet analysis
+  - pdf: For reports
+  - html: For email reports
+
+notifications:
+  threshold_alerts:
+    qualification_rate_low:
+      condition: qualification_rate < 40%
+      notification: Warn operations team
+
+    trial_no_show_high:
+      condition: no_show_rate > 20%
+      notification: Alert operations and review reminders
+
+    conversion_rate_low:
+      condition: trial_to_paid_rate < 30%
+      notification: Alert sales manager
+
+  milestone_alerts:
+    daily_lead_goal:
+      condition: daily_leads >= 50
+      notification: Celebrate with team
+
+    monthly_revenue_goal:
+      condition: monthly_revenue >= target
+      notification: Executive summary
+
+api_endpoints:
+  - GET /api/dashboard/:view
+  - GET /api/dashboard/real-time (WebSocket)
+  - GET /api/dashboard/lead/:id
+  - GET /api/dashboard/report/:type
+  - GET /api/dashboard/export/:format
+
+database_schema:
+  table: public.dashboard_cache
+  columns:
+    - id: uuid
+    - cache_key: string
+    - view_type: string
+    - brand: string
+    - data: jsonb
+    - generated_at: timestamptz
+    - expires_at: timestamptz
+
+  table: public.kpi_snapshots
+  columns:
+    - id: uuid
+    - snapshot_date: date
+    - brand: string
+    - kpi_name: string
+    - kpi_value: decimal
+    - target_value: decimal
+    - variance: decimal
+
+integrations:
+  frontend:
+    - React dashboard components
+    - Chart.js for visualizations
+    - WebSocket for real-time
+
+  supabase:
+    - Read all CQI tables
+    - Write to cache tables
+
+  notification_service:
+    - Send threshold alerts
+    - Email reports
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

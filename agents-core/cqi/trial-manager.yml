@@ -1,0 +1,204 @@
+# Trial Manager Agent
+# Handles trial scheduling, confirmations, and logistics
+
+name: trial-manager
+version: 1.0.0
+type: scheduler
+priority: high
+
+description: |
+  Manages the entire trial lifecycle from booking to completion.
+  Handles scheduling, reminders, rescheduling, and trial outcome tracking.
+
+capabilities:
+  - Check calendar availability
+  - Book trial appointments
+  - Send confirmations (email/SMS)
+  - Handle rescheduling requests
+  - Track trial outcomes
+  - Collect post-trial feedback
+
+trial_types:
+  sotsvc:
+    name: "Trial Cleaning"
+    duration: 60
+    price: 99
+    description: "Experience SOTSVC quality with a 60-minute trial clean"
+    requirements:
+      - Address verification
+      - Service area access
+      - Payment method on file
+
+  boss-of-clean:
+    name: "Free Estimate"
+    duration: 45
+    price: 0
+    description: "On-site assessment and customized quote"
+    requirements:
+      - Property address
+      - Photos (optional)
+      - Service type
+
+  beatslave:
+    name: "Creative Consultation"
+    duration: 30
+    price: 0
+    description: "Discuss your sound vision and creative direction"
+    requirements:
+      - Reference tracks
+      - Project timeline
+      - Budget range
+
+  temple-builder:
+    name: "Ministry Assessment"
+    duration: 60
+    price: 0
+    description: "Faith-focused consultation for ministry growth"
+    requirements:
+      - Ministry name
+      - Current challenges
+      - Growth goals
+
+workflow:
+  steps:
+    - id: availability_check
+      action: check_calendar
+      description: Query available time slots within next 7-14 days
+
+    - id: present_options
+      action: offer_slots
+      description: Present 3-5 available times to lead
+
+    - id: confirm_booking
+      action: create_trial
+      description: Write to public.trials table
+      outputs:
+        - trial_id
+        - confirmation_code
+        - calendar_link
+
+    - id: payment_link
+      condition: trial_price > 0
+      action: generate_stripe_link
+      description: Create checkout link for paid trials
+
+    - id: confirmation
+      action: send_confirmation
+      channels:
+        - email (primary)
+        - SMS (if phone provided)
+      includes:
+        - Trial details
+        - Address/directions
+        - What to expect
+        - Cancellation policy
+        - Contact information
+
+    - id: reminders
+      schedule:
+        - 24_hours_before: SMS + Email
+        - 2_hours_before: SMS
+
+    - id: post_trial
+      delay: 1_hour_after_end
+      action: collect_feedback
+      questions:
+        - "How was your trial experience?"
+        - "Ready to schedule regular service?"
+        - "Any questions or concerns?"
+
+database_schema:
+  table: public.trials
+  columns:
+    - id: uuid (primary key)
+    - lead_id: uuid (foreign key -> leads)
+    - brand: string
+    - trial_type: string
+    - scheduled_date: timestamptz
+    - scheduled_time: time
+    - duration_minutes: integer
+    - price_cents: integer
+    - status: enum (scheduled|completed|cancelled|no_show|rescheduled)
+    - confirmation_code: string
+    - calendar_link: string
+    - stripe_checkout_url: string
+    - payment_status: enum (pending|paid|refunded)
+    - outcome: enum (null|converted|nurture|declined)
+    - feedback: jsonb
+    - notes: text
+    - created_at: timestamptz
+    - updated_at: timestamptz
+
+actions:
+  schedule_trial:
+    input:
+      - lead_id: uuid
+      - brand: string
+      - preferred_date: date
+      - preferred_time: time
+
+    process:
+      1. Validate availability
+      2. Create trial record
+      3. Generate confirmation code
+      4. Create calendar event
+      5. Send confirmation
+      6. Schedule reminders
+
+    output:
+      - trial object
+      - confirmation sent: boolean
+
+  reschedule_trial:
+    input:
+      - trial_id: uuid
+      - new_date: date
+      - new_time: time
+
+    process:
+      1. Check new slot availability
+      2. Update trial record
+      3. Cancel old calendar event
+      4. Create new calendar event
+      5. Send updated confirmation
+
+    output:
+      - updated trial object
+
+  mark_completed:
+    input:
+      - trial_id: uuid
+      - outcome: string
+      - notes: string
+
+    process:
+      1. Update status to completed
+      2. Record outcome
+      3. Trigger feedback collection
+      4. If converted -> pass to closer agent
+      5. If nurture -> add to drip campaign
+
+    output:
+      - completion status
+      - next_steps
+
+integrations:
+  calendar:
+    provider: google_calendar
+    status: future
+    fallback: manual_scheduling
+
+  notifications:
+    email: supabase-edge-function
+    sms: twilio (future)
+
+  payment:
+    provider: stripe
+    actions:
+      - create_checkout_session
+      - verify_payment_status
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

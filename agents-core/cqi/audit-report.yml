@@ -1,0 +1,247 @@
+# Audit Report Agent
+# Generates compliance and session documentation
+
+name: audit-report
+version: 1.0.0
+type: reporter
+priority: medium
+
+description: |
+  Creates comprehensive audit trails for CQI sessions, trial outcomes,
+  and conversion attempts. Ensures compliance, quality control, and
+  data-driven optimization.
+
+report_types:
+  session_audit:
+    purpose: Document complete CQI session
+    frequency: Per CQI session
+    audience: Internal team, management
+
+  trial_audit:
+    purpose: Document trial execution and outcome
+    frequency: Per trial
+    audience: Operations, quality control
+
+  conversion_audit:
+    purpose: Document closing attempt and result
+    frequency: Per closing call
+    audience: Sales management
+
+  monthly_summary:
+    purpose: Aggregate performance metrics
+    frequency: Monthly
+    audience: Leadership, investors
+
+session_audit_structure:
+  metadata:
+    - report_id: uuid
+    - report_type: string
+    - brand: string
+    - generated_at: timestamptz
+    - session_duration: integer (seconds)
+
+  lead_information:
+    - lead_id: uuid
+    - name: string
+    - contact: object (email, phone)
+    - source: string (how they found us)
+    - initial_inquiry: text
+
+  cqi_session:
+    - conductor_agent_version: string
+    - scorer_agent_version: string
+    - questions_asked: integer
+    - responses_captured: integer
+    - qualification_score: integer
+    - score_breakdown: object
+    - red_flags: array
+    - green_flags: array
+    - recommendation: string
+    - reasoning: text
+
+  trial_details:
+    - trial_scheduled: boolean
+    - trial_date: date
+    - trial_type: string
+    - trial_price: integer
+    - confirmation_sent: boolean
+    - payment_collected: boolean
+
+  agent_actions:
+    - actions_taken: array
+      - timestamp: timestamptz
+      - agent: string
+      - action: string
+      - result: string
+      - duration: integer
+
+  compliance_checklist:
+    - consent_obtained: boolean
+    - privacy_policy_presented: boolean
+    - terms_accepted: boolean
+    - data_retention_policy_followed: boolean
+    - opt_out_option_provided: boolean
+
+  outcome:
+    - final_status: string (trial_scheduled|nurture|disqualified)
+    - next_steps: array
+    - follow_up_date: date
+    - assigned_to: string
+
+  analytics:
+    - time_to_score: integer (seconds)
+    - time_to_decision: integer (seconds)
+    - agent_response_time_avg: integer (ms)
+    - error_count: integer
+    - retry_count: integer
+
+trial_audit_structure:
+  trial_information:
+    - trial_id: uuid
+    - lead_id: uuid
+    - brand: string
+    - trial_type: string
+    - scheduled_date: timestamptz
+
+  execution:
+    - status: string (completed|no_show|cancelled)
+    - actual_start_time: timestamptz
+    - actual_end_time: timestamptz
+    - duration_variance: integer (vs planned)
+    - services_performed: array
+    - technician_name: string
+    - technician_notes: text
+
+  client_experience:
+    - client_present: boolean
+    - immediate_feedback: text
+    - concerns_raised: array
+    - enthusiasm_level: enum (high|medium|low)
+    - post_trial_survey: object
+
+  quality_control:
+    - checklist_completed: boolean
+    - photos_taken: array (urls)
+    - before_after_documented: boolean
+    - quality_score: integer (1-10)
+    - issues_identified: array
+
+  conversion_readiness:
+    - ready_to_close: boolean
+    - best_package_fit: string
+    - pricing_strategy: string
+    - objections_anticipated: array
+    - close_probability: integer (0-100)
+
+conversion_audit_structure:
+  closing_attempt:
+    - closer_script_id: uuid
+    - agent_name: string
+    - call_date: timestamptz
+    - call_duration: integer (seconds)
+    - script_followed: boolean
+    - script_deviations: array
+
+  presentation:
+    - packages_presented: array
+    - pricing_discussed: boolean
+    - objections_encountered: array
+    - objection_responses: array
+    - competitor_mentions: array
+
+  outcome:
+    - result: enum (converted|declined|callback|more_info)
+    - package_selected: string
+    - monthly_value: integer
+    - annual_value: integer
+    - payment_method: string
+    - first_service_date: date
+
+  declined_analysis:
+    condition: result == 'declined'
+    - primary_reason: string
+    - secondary_reasons: array
+    - price_objection: boolean
+    - competitor_chosen: string
+    - can_nurture: boolean
+    - follow_up_strategy: string
+
+actions:
+  generate_session_audit:
+    input:
+      - lead_id: uuid
+      - session_type: string
+
+    process:
+      1. Collect all session data from agents
+      2. Validate data completeness
+      3. Run compliance checks
+      4. Calculate analytics
+      5. Generate formatted report
+      6. Store in database
+      7. Send to stakeholders
+
+    output:
+      - audit_report_id: uuid
+      - report_url: string
+      - compliance_status: string
+
+  generate_monthly_summary:
+    input:
+      - brand: string (or 'all')
+      - start_date: date
+      - end_date: date
+
+    metrics_calculated:
+      - total_cqi_sessions: integer
+      - qualification_rate: decimal
+      - trial_booking_rate: decimal
+      - trial_completion_rate: decimal
+      - trial_to_paid_rate: decimal
+      - average_qualification_score: decimal
+      - average_session_duration: integer
+      - revenue_generated: integer
+      - revenue_pipeline: integer
+
+    output:
+      - summary_report_id: uuid
+      - metrics: object
+      - trends: array
+      - recommendations: array
+
+database_schema:
+  table: public.audit_reports
+  columns:
+    - id: uuid
+    - report_type: string
+    - brand: string
+    - lead_id: uuid
+    - trial_id: uuid
+    - closer_script_id: uuid
+    - report_data: jsonb
+    - compliance_status: string
+    - generated_at: timestamptz
+    - generated_by: string (agent name)
+
+export_formats:
+  - json: For API consumption
+  - pdf: For offline review
+  - csv: For analytics tools
+  - html: For email/web viewing
+
+integrations:
+  supabase:
+    tables:
+      - public.audit_reports (write)
+      - public.cqi_responses (read)
+      - public.trials (read)
+      - public.closer_scripts (read)
+
+  analytics:
+    provider: custom_dashboard
+    sends: metrics, trends
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

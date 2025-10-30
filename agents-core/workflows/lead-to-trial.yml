@@ -1,0 +1,374 @@
+# Lead to Trial Workflow
+# Automated workflow from lead capture to trial booking
+
+name: lead-to-trial
+version: 1.0.0
+type: workflow
+priority: high
+
+description: |
+  End-to-end automated workflow that takes a raw lead from initial contact
+  through CQI qualification to trial booking, with intelligent routing and
+  fallback handling.
+
+trigger:
+  event: new_lead_created
+  source: public.leads (INSERT)
+  conditions:
+    - lead.status == 'new'
+    - lead.email != null OR lead.phone != null
+    - lead.brand IN ['sotsvc', 'boss-of-clean', 'beatslave', 'temple-builder']
+
+workflow_stages:
+  stage_1:
+    name: lead_captured
+    description: Lead enters system, validate data
+    agent: startup-coordinator
+    actions:
+      - Validate lead data completeness
+      - Check for duplicates
+      - Assign unique workflow_id
+      - Log workflow start
+
+    validations:
+      required_fields:
+        - name (first + last OR full)
+        - email OR phone
+        - brand
+        - message OR service_interest
+
+    transitions:
+      success: stage_2 (cqi_started)
+      failure: stage_failed (notify_admin)
+
+    timeout: 30 seconds
+
+  stage_2:
+    name: cqi_started
+    description: Initialize CQI session with conductor
+    agent: cqi-conductor
+    actions:
+      - Load brand context via context-librarian
+      - Create CQI session record
+      - Prepare question set based on brand
+      - Initiate qualification interview
+
+    inputs:
+      - lead_id: from stage_1
+      - brand: from lead record
+      - contact_method: auto-detect (form|phone|chat)
+
+    transitions:
+      success: stage_3 (cqi_in_progress)
+      failure: stage_retry (max 2)
+
+    timeout: 5 minutes
+
+  stage_3:
+    name: cqi_in_progress
+    description: Conduct qualification interview
+    agent: cqi-conductor
+    actions:
+      - Present questions to lead
+      - Collect responses
+      - Store in public.cqi_responses
+      - Monitor engagement
+
+    interaction_modes:
+      email:
+        - Send question via email
+        - Wait for response (timeout: 24 hours)
+        - Auto-reminder after 12 hours
+
+      phone:
+        - If human agent: Provide questions live
+        - If AI voice: Conduct automated interview
+        - Record responses
+
+      chat:
+        - Real-time question/answer flow
+        - Conversational style
+        - Adaptive questioning
+
+    transitions:
+      success: stage_4 (cqi_completed)
+      timeout: stage_nurture (follow_up_sequence)
+      abandoned: stage_nurture (re-engagement)
+
+    timeout: 15 minutes (for chat/phone), 24 hours (for email)
+
+  stage_4:
+    name: cqi_completed
+    description: All questions answered
+    agent: cqi-conductor
+    actions:
+      - Mark session complete
+      - Prepare for scoring
+      - Package responses
+
+    transitions:
+      success: stage_5 (scored)
+
+    timeout: 1 minute
+
+  stage_5:
+    name: scored
+    description: Calculate qualification score
+    agent: cqi-scorer
+    actions:
+      - Analyze all responses
+      - Apply brand-specific weights
+      - Calculate total score (0-100)
+      - Identify flags (red/green)
+      - Generate reasoning
+
+    inputs:
+      - cqi_responses: from stage_4
+      - brand: from lead
+      - scoring_model: from brand config
+
+    outputs:
+      - qualification_score: integer
+      - recommendation: trial|nurture|disqualify
+      - reasoning: text
+      - flags: object
+
+    transitions:
+      score >= 70: stage_6 (decision_qualify)
+      score 40-69: stage_nurture (drip_campaign)
+      score < 40: stage_disqualify
+
+    timeout: 1 minute
+
+  stage_6:
+    name: decision_qualify
+    description: Lead qualified for trial
+    agent: cqi-conductor
+    actions:
+      - Log qualification decision
+      - Prepare for trial booking
+      - Generate trial options
+
+    transitions:
+      success: stage_7 (trial_scheduling)
+
+    timeout: 30 seconds
+
+  stage_7:
+    name: trial_scheduling
+    description: Book trial appointment
+    agent: trial-manager
+    actions:
+      - Check calendar availability
+      - Present 3-5 time slot options
+      - Collect preferred date/time
+      - Verify address/location
+      - Create trial record in public.trials
+
+    brand_specific:
+      sotsvc:
+        trial_type: "60-Minute Trial Cleaning"
+        price: 99
+        duration: 60
+        requirements: [address, access_method, parking]
+
+      boss-of-clean:
+        trial_type: "Free On-Site Estimate"
+        price: 0
+        duration: 45
+        requirements: [address, photos_optional]
+
+      beatslave:
+        trial_type: "Creative Consultation"
+        price: 0
+        duration: 30
+        requirements: [portfolio_link, references]
+
+      temple-builder:
+        trial_type: "Ministry Assessment"
+        price: 0
+        duration: 60
+        requirements: [ministry_name, current_challenges]
+
+    transitions:
+      booked: stage_8 (trial_confirmed)
+      no_availability: stage_waitlist
+      declined: stage_nurture
+
+    timeout: 5 minutes
+
+  stage_8:
+    name: trial_confirmed
+    description: Trial booked, send confirmations
+    agent: trial-manager
+    actions:
+      - Generate confirmation code
+      - Create calendar event
+      - Send email confirmation
+      - Send SMS confirmation (if phone available)
+      - Schedule reminders (24h, 2h before)
+      - If paid trial, send Stripe payment link
+
+    confirmation_template:
+      subject: "Your {brand} Trial is Confirmed! 🎉"
+      body: |
+        Hi {first_name},
+
+        Great news! Your {trial_type} is confirmed for:
+        📅 {trial_date} at {trial_time}
+        📍 {address}
+        ⏱️ Duration: {duration} minutes
+        {payment_info}
+
+        What to expect:
+        {brand_specific_expectations}
+
+        Confirmation Code: {confirmation_code}
+
+        Questions? Reply to this email or call {brand_phone}
+
+        See you soon!
+        {brand_signature}
+
+    transitions:
+      confirmations_sent: stage_9 (workflow_complete)
+      payment_required: stage_payment_pending
+
+    timeout: 2 minutes
+
+  stage_9:
+    name: workflow_complete
+    description: Lead to trial workflow finished successfully
+    agent: session-closer
+    actions:
+      - Mark workflow status: completed
+      - Generate audit report
+      - Log metrics
+      - Schedule trial reminders
+      - Create follow-up tasks
+      - Notify assigned human agent
+
+    outputs:
+      - workflow_status: completed
+      - trial_id: uuid
+      - next_workflow: trial-to-paid (trigger on trial completion)
+
+    timeout: 1 minute
+
+fallback_stages:
+  stage_nurture:
+    name: nurture_sequence
+    description: Lead not ready for trial, enter drip campaign
+    agent: context-librarian
+    actions:
+      - Tag lead as 'nurture'
+      - Add to email drip campaign
+      - Schedule follow-up (7, 14, 30 days)
+      - Provide educational content
+
+    exit: workflow_complete (with nurture status)
+
+  stage_disqualify:
+    name: polite_disqualify
+    description: Lead not a fit, graceful decline
+    agent: cqi-conductor
+    actions:
+      - Send polite thank you email
+      - Offer alternative resources
+      - Mark lead as disqualified
+      - Add to newsletter (if opted in)
+
+    exit: workflow_complete (with disqualified status)
+
+  stage_waitlist:
+    name: waitlist_hold
+    description: No availability, add to waitlist
+    agent: trial-manager
+    actions:
+      - Add to trial waitlist
+      - Send waitlist confirmation
+      - Notify when slots open
+      - Follow up in 48 hours
+
+    exit: resume stage_7 when availability exists
+
+  stage_retry:
+    name: retry_handler
+    description: Transient failure, retry with backoff
+    agent: workflow-monitor
+    actions:
+      - Log retry attempt
+      - Increment retry count
+      - Wait (exponential backoff: 1s, 5s, 15s)
+      - Resume from failed stage
+
+    max_retries: 3
+    exit_on_failure: stage_failed
+
+  stage_failed:
+    name: workflow_failed
+    description: Critical failure, escalate to human
+    agent: workflow-monitor
+    actions:
+      - Log failure details
+      - Create urgent task for human agent
+      - Send alert to operations
+      - Preserve all data for manual recovery
+
+    notification:
+      to: operations@sotsvc.com
+      priority: high
+      subject: "URGENT: Lead-to-Trial Workflow Failed"
+
+monitoring:
+  sla_targets:
+    total_workflow_duration: 30 minutes (for chat/phone)
+    lead_to_cqi_start: 5 minutes
+    cqi_to_scored: 20 minutes
+    scored_to_trial: 10 minutes
+
+  success_metrics:
+    - Completion rate: Target 85%
+    - Qualification rate: Target 60%
+    - Trial booking rate: Target 75% of qualified
+    - Time to trial: Target 3 days
+
+  failure_analysis:
+    - Track failure points
+    - Identify bottlenecks
+    - Recommend optimizations
+
+integrations:
+  supabase:
+    triggers:
+      - Listen for INSERT on public.leads
+    writes:
+      - public.cqi_sessions
+      - public.cqi_responses
+      - public.trials
+      - public.workflow_instances
+
+  agents:
+    - cqi-conductor (orchestration)
+    - cqi-scorer (scoring)
+    - trial-manager (booking)
+    - session-closer (finalization)
+    - workflow-monitor (tracking)
+
+  notifications:
+    - Email via Supabase Edge Function
+    - SMS via Twilio (future)
+    - Calendar invites
+
+execution:
+  runtime: python
+  framework: langchain
+  orchestration: conductor pattern
+  error_handling: retry + fallback + escalation
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active
+  estimated_duration: 30 minutes
+  success_rate_target: 85%

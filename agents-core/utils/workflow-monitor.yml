@@ -1,0 +1,353 @@
+# Workflow Monitor Agent
+# Tracks and manages automated workflow execution
+
+name: workflow-monitor
+version: 1.0.0
+type: utility
+priority: medium
+
+description: |
+  Monitors the execution of automated workflows (lead-to-trial, trial-to-paid),
+  tracks progress, handles failures, and provides workflow analytics.
+
+monitored_workflows:
+  lead_to_trial:
+    description: From initial lead capture to trial booking
+    stages:
+      - lead_captured: Lead enters system
+      - cqi_started: CQI session initiated
+      - cqi_completed: Qualification complete
+      - scored: Lead scored
+      - decision_made: Route determined
+      - trial_scheduled: Trial booked
+      - confirmation_sent: Confirmations delivered
+
+    stage_timeouts:
+      cqi_started: 5 minutes (from lead_captured)
+      cqi_completed: 15 minutes (from cqi_started)
+      scored: 1 minute (from cqi_completed)
+      decision_made: 1 minute (from scored)
+      trial_scheduled: 5 minutes (from decision_made)
+      confirmation_sent: 2 minutes (from trial_scheduled)
+
+    success_criteria:
+      - All stages completed in sequence
+      - No errors or retries
+      - Trial scheduled within SLA
+      - Confirmation delivered
+
+  trial_to_paid:
+    description: From trial completion to paid customer
+    stages:
+      - trial_completed: Trial service completed
+      - feedback_collected: Post-trial survey
+      - script_generated: Closer script ready
+      - closing_call_scheduled: Follow-up booked
+      - closing_call_completed: Call conducted
+      - proposal_sent: Pricing presented
+      - contract_signed: Agreement executed
+      - payment_collected: First payment received
+      - onboarding_started: Customer onboarded
+
+    stage_timeouts:
+      feedback_collected: 1 hour (from trial_completed)
+      script_generated: 15 minutes (from feedback_collected)
+      closing_call_scheduled: 24 hours (from script_generated)
+      closing_call_completed: 48 hours (from scheduled)
+      proposal_sent: 1 hour (from call_completed)
+      contract_signed: 7 days (from proposal_sent)
+      payment_collected: 24 hours (from contract_signed)
+      onboarding_started: 48 hours (from payment)
+
+    success_criteria:
+      - Conversion within 14 days of trial
+      - All documentation complete
+      - Payment method established
+      - First service scheduled
+
+monitoring_capabilities:
+  real_time_tracking:
+    - Active workflow instances
+    - Current stage per instance
+    - Time in current stage
+    - Expected completion time
+    - Blockers identified
+
+  failure_detection:
+    - Stage timeout exceeded
+    - Error thrown by agent
+    - Data validation failure
+    - External service unavailable
+    - Infinite retry loops
+
+  performance_analysis:
+    - Average stage duration
+    - Bottleneck identification
+    - Completion rate by stage
+    - Time-to-completion trends
+    - Success rate by brand
+
+  alerting:
+    - Stuck workflows
+    - High failure rates
+    - SLA violations
+    - Performance degradation
+
+actions:
+  track_workflow:
+    input:
+      - workflow_id: uuid
+      - workflow_type: string (lead_to_trial|trial_to_paid)
+      - lead_id: uuid
+      - brand: string
+
+    process:
+      1. Create workflow instance record
+      2. Set initial stage
+      3. Monitor stage progression
+      4. Track timing and transitions
+      5. Detect anomalies
+      6. Alert on issues
+
+    output:
+      - workflow_status: string (active|completed|failed|stuck)
+      - current_stage: string
+      - time_in_stage: integer (seconds)
+      - overall_progress: percentage
+
+  advance_stage:
+    input:
+      - workflow_id: uuid
+      - from_stage: string
+      - to_stage: string
+      - agent: string (which agent advanced it)
+
+    process:
+      1. Validate stage transition
+      2. Record transition time
+      3. Update workflow status
+      4. Check for completion
+      5. Alert if SLA at risk
+
+    output:
+      - transition_success: boolean
+      - new_stage: string
+      - time_spent_in_stage: integer
+
+  handle_failure:
+    input:
+      - workflow_id: uuid
+      - stage: string
+      - error: string
+      - retry_count: integer
+
+    process:
+      1. Log failure details
+      2. Determine if retryable
+      3. If retryable, schedule retry
+      4. If not, escalate to human
+      5. Update workflow status
+
+    retry_policy:
+      max_retries: 3
+      backoff: exponential
+      escalate_after: 3 failures
+
+    output:
+      - retry_scheduled: boolean
+      - retry_at: timestamptz
+      - escalated: boolean
+
+  get_stuck_workflows:
+    description: Find workflows exceeding stage timeout
+    process:
+      1. Query all active workflows
+      2. Check time in current stage
+      3. Compare to timeout threshold
+      4. Return stuck instances
+
+    output:
+      - stuck_workflows: array
+        - workflow_id: uuid
+        - type: string
+        - current_stage: string
+        - stuck_for: integer (minutes)
+        - lead_info: object
+
+  generate_workflow_report:
+    input:
+      - workflow_type: string
+      - time_range: string
+      - brand: string
+
+    metrics:
+      - Total started: integer
+      - Total completed: integer
+      - Completion rate: percentage
+      - Avg time to complete: duration
+      - Failure rate: percentage
+      - Bottleneck stages: array
+      - Success factors: array
+
+    output:
+      - report: object
+      - recommendations: array
+
+stage_analytics:
+  per_stage_metrics:
+    - Entry count: How many workflows entered
+    - Exit count: How many completed stage
+    - Avg duration: Time spent in stage
+    - Drop rate: % that failed in stage
+    - Timeout rate: % that exceeded limit
+
+  transition_analysis:
+    - Most common paths
+    - Unusual transitions
+    - Skip patterns
+    - Backtrack occurrences
+
+  optimization_insights:
+    - Slowest stages
+    - High-failure stages
+    - Automation opportunities
+    - Process improvements
+
+database_schema:
+  table: public.workflow_instances
+  columns:
+    - id: uuid
+    - workflow_type: string
+    - lead_id: uuid
+    - trial_id: uuid
+    - brand: string
+    - status: enum (active|completed|failed|stuck)
+    - current_stage: string
+    - stage_history: jsonb
+    - started_at: timestamptz
+    - completed_at: timestamptz
+    - duration_seconds: integer
+    - error_log: jsonb
+
+  table: public.workflow_stage_transitions
+  columns:
+    - id: uuid
+    - workflow_id: uuid
+    - from_stage: string
+    - to_stage: string
+    - transitioned_at: timestamptz
+    - duration_in_stage: integer
+    - agent: string
+    - success: boolean
+    - error: text
+
+  table: public.workflow_metrics
+  columns:
+    - id: uuid
+    - date: date
+    - workflow_type: string
+    - brand: string
+    - total_started: integer
+    - total_completed: integer
+    - completion_rate: decimal
+    - avg_duration_seconds: integer
+    - failure_count: integer
+
+automated_actions:
+  auto_retry:
+    enabled: true
+    conditions:
+      - Transient errors (network, timeout)
+      - External service unavailable
+    max_attempts: 3
+
+  auto_escalate:
+    enabled: true
+    conditions:
+      - Max retries exceeded
+      - Critical errors
+      - Stage stuck > 2x timeout
+    notify: operations@sotsvc.com
+
+  auto_recover:
+    enabled: true
+    conditions:
+      - Data inconsistencies detected
+      - Missing required fields
+    actions:
+      - Attempt data backfill
+      - Request manual input
+      - Resume workflow
+
+alerts:
+  stuck_workflow:
+    trigger: Stage duration > 2x timeout
+    severity: warning
+    action: Notify assigned agent
+
+  high_failure_rate:
+    trigger: Failure rate > 15% in 1 hour
+    severity: critical
+    action: Alert engineering team
+
+  bottleneck_detected:
+    trigger: Avg stage duration increases 50%
+    severity: warning
+    action: Flag for process review
+
+  sla_risk:
+    trigger: Workflow approaching completion deadline
+    severity: info
+    action: Prioritize workflow
+
+integrations:
+  agents:
+    - Receive stage updates from all agents
+    - Send alerts to relevant agents
+    - Request retries
+
+  supabase:
+    tables:
+      - public.workflow_instances (write)
+      - public.workflow_stage_transitions (write)
+      - public.workflow_metrics (write)
+      - All CQI tables (read)
+
+  dashboard:
+    - Provide workflow status data
+    - Send real-time updates
+    - Supply analytics
+
+  notification_service:
+    - Send alerts
+    - Escalation emails
+    - Status updates
+
+api_endpoints:
+  - GET /api/workflows/:id
+  - GET /api/workflows/active
+  - GET /api/workflows/stuck
+  - POST /api/workflows/:id/retry
+  - GET /api/workflows/report/:type
+
+visualization:
+  workflow_diagram:
+    - Show stage progression
+    - Highlight current stage
+    - Display timing per stage
+    - Mark failures/retries
+
+  funnel_chart:
+    - Entry count per stage
+    - Drop-off visualization
+    - Conversion rates
+
+  timeline:
+    - Chronological stage transitions
+    - Duration bars
+    - Error markers
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

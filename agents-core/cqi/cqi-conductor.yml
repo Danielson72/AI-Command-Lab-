@@ -1,0 +1,207 @@
+# CQI Conductor Agent
+# The orchestrator for Client Qualification Interview system
+# Coordinates all CQI agents and manages the qualification workflow
+
+name: cqi-conductor
+version: 1.0.0
+type: orchestrator
+priority: critical
+
+description: |
+  Master orchestrator for the CQI (Client Qualification Interview) system.
+  Manages the entire qualification workflow from initial lead to trial conversion.
+  Coordinates scorer, trial manager, closer script, and audit report agents.
+
+capabilities:
+  - Lead intake and initial assessment
+  - Agent coordination and workflow management
+  - Multi-brand context switching (SOTSVC, Boss of Clean, BeatSlave, Temple Builder)
+  - Real-time qualification scoring
+  - Trial scheduling and management
+  - Closing script generation
+  - Audit trail generation
+
+inputs:
+  required:
+    - lead_id: uuid                    # From public.leads table
+    - brand: string                    # sotsvc|boss-of-clean|beatslave|temple-builder
+    - contact_method: string           # phone|email|chat|form
+  optional:
+    - priority: string                 # high|medium|low (default: medium)
+    - assigned_agent: string           # Human agent name
+    - timezone: string                 # For scheduling (default: America/New_York)
+
+outputs:
+  - qualification_score: integer       # 0-100
+  - recommended_action: string         # trial|nurture|disqualify
+  - trial_date: datetime               # If qualified
+  - closer_script_id: uuid             # Generated script
+  - audit_report_id: uuid              # Session documentation
+  - next_steps: array                  # Action items
+
+workflow:
+  steps:
+    - id: intake
+      agent: self
+      action: validate_lead_data
+      description: Verify lead exists in Supabase and has minimum required fields
+
+    - id: load_context
+      agent: context-librarian
+      action: load_brand_context
+      description: Load brand-specific templates, services, and pricing
+
+    - id: score
+      agent: cqi-scorer
+      action: calculate_qualification_score
+      description: Run scoring algorithm based on responses
+
+    - id: decision
+      agent: self
+      action: route_based_on_score
+      description: |
+        - Score >= 70: Proceed to trial booking
+        - Score 40-69: Nurture sequence
+        - Score < 40: Polite disqualification
+
+    - id: trial
+      agent: trial-manager
+      condition: score >= 70
+      action: schedule_trial
+      description: Book trial appointment and send confirmation
+
+    - id: script
+      agent: closer-script
+      condition: score >= 70
+      action: generate_closing_script
+      description: Create personalized closing script for trial call
+
+    - id: audit
+      agent: audit-report
+      action: generate_session_report
+      description: Document entire CQI session for compliance
+
+    - id: notify
+      agent: self
+      action: send_notifications
+      description: Email/SMS to lead and internal team
+
+integrations:
+  supabase:
+    tables:
+      - public.leads                   # Read lead data
+      - public.cqi_responses           # Store Q&A responses
+      - public.cqi_templates           # Load question templates
+      - public.trials                  # Schedule trials
+      - public.services                # Service catalog
+    rls: enabled
+
+  notifications:
+    - type: email
+      provider: supabase-edge-function
+      function: notify_contact
+
+    - type: sms
+      provider: twilio
+      status: future
+
+  stripe:
+    actions:
+      - create_trial_checkout_link
+      - schedule_payment_collection
+    status: phase-2
+
+error_handling:
+  retry_policy:
+    max_attempts: 3
+    backoff: exponential
+
+  fallback:
+    - Log error to audit trail
+    - Notify human agent
+    - Create manual follow-up task
+
+  validation_errors:
+    - Return friendly message to user
+    - Store partial data for resume
+
+monitoring:
+  metrics:
+    - cqi_sessions_started
+    - cqi_sessions_completed
+    - qualification_rate
+    - trial_booking_rate
+    - average_session_duration
+
+  alerts:
+    - score_anomaly: Score pattern deviation
+    - low_conversion: < 20% trial booking rate
+    - high_abandonment: > 30% incomplete sessions
+
+brand_configs:
+  sotsvc:
+    services:
+      - Residential Cleaning
+      - Commercial Cleaning
+      - Post-Construction
+      - Move In/Out
+    trial_duration: 60min
+    trial_price: 99
+    qualifier_threshold: 70
+    phone: "407-461-6039"
+    tagline: "YOU'RE CLEAN OR YOU'RE DIRTY"
+
+  boss-of-clean:
+    services:
+      - Pressure Washing
+      - Soft Washing
+      - Driveway Cleaning
+      - Roof Cleaning
+    trial_duration: 45min
+    trial_price: 0  # Free estimate
+    qualifier_threshold: 60
+    marketplace: true
+
+  beatslave:
+    services:
+      - Beat Production
+      - Mixing/Mastering
+      - Custom Compositions
+    trial_duration: 30min
+    trial_price: 0  # Free consultation
+    qualifier_threshold: 50
+
+  temple-builder:
+    services:
+      - Faith-Based Consulting
+      - Ministry Development
+      - Leadership Training
+    trial_duration: 60min
+    trial_price: 0
+    qualifier_threshold: 80
+
+execution:
+  runtime: python
+  framework: langchain
+  model: claude-sonnet-4-5-20250929
+  temperature: 0.7
+  max_tokens: 4000
+
+  dependencies:
+    - langchain
+    - supabase-py
+    - pydantic
+    - python-dotenv
+
+  environment:
+    - SUPABASE_URL
+    - SUPABASE_ANON_KEY
+    - ANTHROPIC_API_KEY
+    - BRAND_CONTEXT_PATH
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  last_modified: 2025-10-29
+  status: active
+  documentation: README-CQI.md

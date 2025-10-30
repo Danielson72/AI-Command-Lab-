@@ -1,0 +1,227 @@
+# SOTSVC Brand Configuration for CQI System
+
+brand:
+  id: sotsvc
+  name: "Sonz of Thunder Services"
+  legal_name: "SOTSVC, LLC"
+  tagline: "YOU'RE CLEAN OR YOU'RE DIRTY"
+
+  websites:
+    primary: "SOTSVC.com"
+    alternate: "TrustedCleaningExpert.com"
+
+  contact:
+    phone: "407-461-6039"
+    email: "contact@sotsvc.com"
+    support: "support@sotsvc.com"
+    operations: "operations@sotsvc.com"
+
+  branding:
+    note: "Always spell 'Sonz' with a Z, not 'Sons'"
+    watermark: "SOTSVC.com"
+    show_tce: true  # Show TrustedCleaningExpert.com in captions
+
+services:
+  residential_cleaning:
+    name: "Residential Cleaning"
+    description: "Professional home cleaning services"
+    duration_base: 120  # minutes
+    pricing:
+      one_time: 199
+      weekly: 129
+      biweekly: 149
+      monthly: 179
+    includes:
+      - "Dusting all surfaces"
+      - "Vacuum and mop floors"
+      - "Clean all bathrooms"
+      - "Kitchen cleaning"
+      - "Trash removal"
+
+  commercial_cleaning:
+    name: "Commercial Cleaning"
+    description: "Office and commercial space cleaning"
+    duration_base: 180
+    pricing:
+      per_sqft: 0.15
+      minimum: 250
+    includes:
+      - "Floor care"
+      - "Restroom sanitation"
+      - "Break room cleaning"
+      - "Trash and recycling"
+      - "Surface disinfection"
+
+  post_construction:
+    name: "Post-Construction Cleaning"
+    description: "Deep cleaning after renovation or construction"
+    duration_base: 240
+    pricing:
+      per_sqft: 0.25
+      minimum: 499
+    includes:
+      - "Dust and debris removal"
+      - "Window cleaning"
+      - "Floor scrubbing"
+      - "Paint removal"
+      - "Final polish"
+
+  move_in_out:
+    name: "Move In/Out Cleaning"
+    description: "Comprehensive cleaning for moving"
+    duration_base: 180
+    pricing:
+      studio: 199
+      one_bed: 249
+      two_bed: 299
+      three_bed: 349
+    includes:
+      - "Empty property deep clean"
+      - "All surfaces and fixtures"
+      - "Inside cabinets and appliances"
+      - "Baseboards and walls"
+      - "Windows (inside)"
+
+trial:
+  name: "Trial Cleaning"
+  duration: 60  # minutes
+  price: 99
+  description: "Experience SOTSVC quality with a 60-minute focused clean"
+  offer: "Clean one room or area of your choice"
+  includes:
+    - "Your choice of room or area"
+    - "Professional-grade products"
+    - "Experienced cleaner"
+    - "Quality guarantee"
+  requirements:
+    - address
+    - access_method
+    - parking_info
+    - preferred_area_to_clean
+
+cqi_settings:
+  qualification_threshold: 70
+  scoring_weights:
+    budget_alignment: 25
+    urgency: 20
+    decision_authority: 20
+    fit_quality: 15
+    engagement_level: 10
+    contact_quality: 10
+
+  questions:
+    budget:
+      - "What's your budget for professional cleaning services?"
+      - "How often are you thinking about having cleaning done?"
+      - "Have you used professional cleaning services before?"
+
+    urgency:
+      - "When do you need cleaning services to start?"
+      - "Is there a specific event or deadline driving this?"
+
+    property:
+      - "What type of property? (home, office, other)"
+      - "Approximate square footage?"
+      - "Any special areas or concerns?"
+
+    decision:
+      - "Are you the decision-maker for this service?"
+      - "Do you need approval from anyone else?"
+
+templates:
+  welcome_email:
+    subject: "Welcome to SOTSVC - Let's Get You Clean!"
+    body: |
+      Hi {first_name},
+
+      Thanks for your interest in SOTSVC! We're excited to help make your
+      space spotless with our professional cleaning services.
+
+      Here's what happens next:
+      1. We'll ask a few quick questions to understand your needs
+      2. Based on your answers, we'll recommend the best service package
+      3. If it's a good fit, we'll schedule your trial cleaning
+
+      Questions? Call us at 407-461-6039 or reply to this email.
+
+      Let's do this!
+      The SOTSVC Team
+
+      "YOU'RE CLEAN OR YOU'RE DIRTY" ™
+
+  trial_confirmation:
+    subject: "Your SOTSVC Trial Cleaning is Confirmed!"
+    body: |
+      Hi {first_name},
+
+      Excellent! Your 60-minute trial cleaning is confirmed:
+
+      📅 Date: {trial_date}
+      ⏰ Time: {trial_time}
+      📍 Address: {address}
+      🧹 Area: {area_to_clean}
+
+      What to expect:
+      - Our professional cleaner will arrive on time
+      - We'll clean your chosen area thoroughly
+      - You'll see the SOTSVC difference firsthand
+
+      Confirmation Code: {confirmation_code}
+      Cost: $99 (applied to first full service if you sign up)
+
+      Need to reschedule? Call 407-461-6039
+
+      See you {trial_date}!
+      SOTSVC Team
+
+pricing_strategy:
+  frequency_discounts:
+    weekly: 0.35      # 35% off vs one-time
+    biweekly: 0.25    # 25% off
+    monthly: 0.10     # 10% off
+
+  volume_discounts:
+    over_3000_sqft: 0.10
+    multiple_properties: 0.15
+
+  promotions:
+    referral_bonus: 50  # dollars off for referrer and referee
+    first_time_customer: 20  # dollars off first full service
+    trial_credit: 99  # trial cost credited to first service
+
+objection_handlers:
+  price:
+    trigger: "too expensive|over budget|can't afford"
+    response: |
+      I understand budget is important. Let me ask - how much time do you
+      spend cleaning each week? If it's even 3 hours, that's 12 hours per
+      month. What's your hourly worth? Our service actually saves you money
+      when you factor in your time, plus we provide all equipment and supplies.
+
+  trust:
+    trigger: "don't know you|reviews|references"
+    response: |
+      Great question! We're fully licensed and insured. Check out our reviews
+      on Google and TrustedCleaningExpert.com. Plus, our guarantee: if you're
+      not completely satisfied, we'll re-clean for free or refund your money.
+
+  timing:
+    trigger: "need to think|not ready|maybe later"
+    response: |
+      Absolutely, this is an important decision. Can I ask what specifically
+      you'd like to think about? If it's pricing, scheduling, or scope, I can
+      address that now so you have all the information you need.
+
+  comparison:
+    trigger: "comparing|other companies|cheaper option"
+    response: |
+      Smart to do research! Many clients compared options before choosing us.
+      Here's why they picked SOTSVC: 1) Same professional team every time,
+      2) Licensed, insured, and bonded, 3) Our "Clean or Dirty" guarantee.
+      What's most important to you in a cleaning service?
+
+metadata:
+  created: 2025-10-29
+  author: Daniel Alvarez
+  version: 1.0.0
+  status: active

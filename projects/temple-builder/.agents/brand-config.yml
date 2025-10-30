@@ -1,0 +1,373 @@
+# Temple Builder Brand Configuration for CQI System
+
+brand:
+  id: temple-builder
+  name: "Temple Builder"
+  legal_name: "Temple Builder Ministries"
+  tagline: "Building Kingdom Businesses with Kingdom Principles"
+
+  websites:
+    primary: "TempleBuilder.com"
+    focus: "Faith-based business and ministry consulting"
+
+  contact:
+    email: "info@templebuilder.com"
+    support: "support@templebuilder.com"
+    ministry: "ministry@templebuilder.com"
+
+  branding:
+    tone: "Faith-centered, professional, encouraging, biblical"
+    values:
+      - "Kingdom-first business"
+      - "Faithful stewardship"
+      - "Servant leadership"
+      - "Sustainable impact"
+
+services:
+  faith_based_consulting:
+    name: "Faith-Based Business Consulting"
+    description: "Align your business with Kingdom principles"
+    duration_base: 12  # weeks
+    pricing:
+      discovery_package: 500
+      foundation_package: 2000
+      transformation_package: 5000
+      ongoing_coaching: 500  # per month
+    includes:
+      discovery:
+        - "3 one-hour sessions"
+        - "Business/ministry assessment"
+        - "Kingdom alignment audit"
+        - "Written recommendations"
+      foundation:
+        - "12 weekly sessions"
+        - "Business strategy development"
+        - "Biblical framework integration"
+        - "Custom action plan"
+        - "Email support"
+      transformation:
+        - "3-month intensive coaching"
+        - "Weekly group sessions"
+        - "1-on-1 consulting"
+        - "Full business overhaul"
+        - "Ongoing support"
+        - "Community access"
+
+  ministry_development:
+    name: "Ministry Development"
+    description: "Launch, grow, or revitalize your ministry"
+    duration_base: 16  # weeks
+    pricing:
+      launch_package: 3000
+      growth_package: 5000
+      revitalization: 4000
+    includes:
+      launch:
+        - "Ministry vision casting"
+        - "Structure and governance"
+        - "Fundraising strategy"
+        - "Launch timeline"
+        - "First 90 days roadmap"
+      growth:
+        - "Growth assessment"
+        - "Leadership development"
+        - "Systems and processes"
+        - "Volunteer recruitment"
+        - "Metrics and tracking"
+      revitalization:
+        - "Ministry health audit"
+        - "Renewed vision"
+        - "Culture transformation"
+        - "Leadership realignment"
+        - "Relaunch plan"
+
+  leadership_training:
+    name: "Kingdom Leadership Training"
+    description: "Develop Christ-centered leaders"
+    duration_base: 8  # weeks
+    pricing:
+      individual: 1500
+      small_group: 3000  # up to 5 people
+      church_team: 5000  # up to 15 people
+      custom_retreat: "quote"
+    includes:
+      - "Biblical leadership principles"
+      - "Servant leadership model"
+      - "Decision-making framework"
+      - "Team building"
+      - "Conflict resolution"
+      - "Workbook and resources"
+
+  devotional_content:
+    name: "Custom Devotional Content"
+    description: "Professional devotional writing for your ministry"
+    duration_base: 4  # weeks
+    pricing:
+      single_devotional: 200
+      devotional_series: 800  # 5 devotionals
+      monthly_subscription: 600  # 4 devotionals/month
+      book_ghostwriting: "quote"
+    includes:
+      - "Scripture-based content"
+      - "Reflection questions"
+      - "Prayer prompts"
+      - "Application points"
+      - "Unlimited revisions"
+
+  strategic_planning:
+    name: "Strategic Planning Sessions"
+    description: "Annual planning with Kingdom perspective"
+    duration_base: 1  # day intensive
+    pricing:
+      half_day: 1000
+      full_day: 2000
+      multi_day_retreat: "quote"
+    includes:
+      - "Vision clarification"
+      - "Goal setting (Kingdom-aligned)"
+      - "Action planning"
+      - "Obstacle identification"
+      - "Accountability structure"
+      - "Follow-up sessions"
+
+trial:
+  name: "Ministry Assessment Call"
+  duration: 60  # minutes
+  price: 0
+  description: "Free consultation to assess your ministry or business needs"
+  format: "Video call (Zoom)"
+  includes:
+    - "Current state assessment"
+    - "Challenge identification"
+    - "Kingdom alignment review"
+    - "Service recommendations"
+    - "Custom roadmap overview"
+    - "Prayer and encouragement"
+  requirements:
+    - ministry_or_business_name
+    - current_challenges
+    - growth_goals
+    - faith_background
+
+cqi_settings:
+  qualification_threshold: 80  # Higher - looking for committed, aligned clients
+  scoring_weights:
+    faith_alignment: 30  # Most important
+    ministry_readiness: 25
+    budget_commitment: 15
+    growth_desire: 15
+    coachability: 10
+    decision_authority: 5
+
+  questions:
+    faith:
+      - "Tell me about your faith journey and how it influences your work?"
+      - "What does 'Kingdom business' or 'Kingdom ministry' mean to you?"
+      - "How do you currently integrate faith into your business/ministry?"
+
+    ministry:
+      - "What is your current ministry or business?"
+      - "How long have you been in operation?"
+      - "What's your mission or calling?"
+      - "Who do you serve?"
+
+    challenges:
+      - "What are your biggest challenges right now?"
+      - "Where do you feel stuck or unclear?"
+      - "What's preventing you from the next level of growth?"
+
+    goals:
+      - "Where do you want to be in 1 year? 5 years?"
+      - "What impact do you want to make for the Kingdom?"
+      - "What would success look like?"
+
+    commitment:
+      - "Are you ready to invest time and resources in growth?"
+      - "What's your budget for coaching or consulting?"
+      - "How much time can you dedicate to this process?"
+
+    authority:
+      - "Are you the primary decision-maker?"
+      - "If married, is your spouse supportive of this investment?"
+      - "Do you have board/elder approval if needed?"
+
+templates:
+  welcome_email:
+    subject: "Welcome to Temple Builder - Let's Build Together"
+    body: |
+      Hello {first_name},
+
+      Grace and peace to you! We're honored that you've reached out to
+      Temple Builder. If you're reading this, God has stirred something
+      in your heart about your business or ministry - and we're here to
+      help you steward that calling faithfully.
+
+      What happens next:
+      1. We'll ask some thoughtful questions about your journey
+      2. Assess where you are and where God is calling you
+      3. Schedule your free Ministry Assessment Call
+      4. Pray together and explore next steps
+
+      Our heart: We don't just want to grow your business or ministry -
+      we want to see it aligned with God's Kingdom purposes and bearing
+      fruit that lasts.
+
+      "Unless the LORD builds the house, the builders labor in vain."
+      - Psalm 127:1
+
+      Questions? Reply to this email or call us.
+
+      In His service,
+      The Temple Builder Team
+
+  consultation_confirmation:
+    subject: "Your Temple Builder Ministry Assessment is Scheduled"
+    body: |
+      Hello {first_name},
+
+      Your Ministry Assessment Call is confirmed:
+
+      📅 Date: {consultation_date}
+      ⏰ Time: {consultation_time}
+      💻 Platform: Zoom
+      ⏱️ Duration: 60 minutes
+
+      Before our call, please prayerfully consider:
+
+      ✝️ Where is God leading you?
+      📖 What scriptures has He highlighted for this season?
+      🎯 What challenges are you facing?
+      🌱 What growth do you sense He's calling you to?
+      💭 What questions do you have for us?
+
+      During our time together:
+      - We'll discuss your current state
+      - Identify obstacles and opportunities
+      - Explore Kingdom alignment
+      - Recommend next steps
+      - Pray for your journey
+
+      Zoom Link: {call_link}
+      Confirmation Code: {confirmation_code}
+
+      Need to reschedule? Email ministry@templebuilder.com
+
+      Looking forward to our conversation!
+
+      Blessings,
+      {consultant_name}
+      Temple Builder
+
+      "For I know the plans I have for you, declares the LORD, plans to
+      prosper you and not to harm you, plans to give you hope and a future."
+      - Jeremiah 29:11
+
+pricing_strategy:
+  payment_plans:
+    available: true
+    typical: "3-6 month payment plans"
+    deposit: 0.25  # 25% down
+
+  scholarships:
+    available: true
+    description: "Limited scholarships for church plants and struggling ministries"
+    application_required: true
+
+  group_discounts:
+    church_staff: 0.20  # 20% off for church staff teams
+    ministry_network: 0.15  # For ministry networks
+
+  value_adds:
+    - "Monthly office hours (group Q&A)"
+    - "Resource library access"
+    - "Community forum"
+    - "Prayer support"
+
+objection_handlers:
+  cost:
+    trigger: "expensive|can't afford|no budget|money"
+    response: |
+      I understand - and as a ministry, we take that seriously. Here's what
+      I'd encourage you to consider: What's the cost of staying stuck? Of
+      missing God's best? Of burnout? We've seen ministries transform and
+      businesses thrive when properly aligned. Plus, we offer payment plans
+      and limited scholarships. The real question isn't "Can I afford this?"
+      but "Can I afford not to invest in what God is calling me to build?"
+      Let's pray about it together.
+
+  diy:
+    trigger: "do it myself|just need resources|books|free content"
+    response: |
+      I love that initiative! And yes, there's great free content out there.
+      But here's what we've found: Having a guide who's walked this path,
+      who can speak biblically and practically into your specific situation,
+      accelerates your progress dramatically. Think of it like discipleship -
+      you could read the Bible alone, or you could have a mentor who helps
+      you apply it. Both have value, but one is transformational. What if
+      this isn't about "can you do it alone" but "is God providing help"?
+
+  timing:
+    trigger: "not ready|maybe later|wait|pray about it"
+    response: |
+      Absolutely - prayer is essential! In fact, I'd encourage you to pray
+      specifically about these questions: 1) Is God calling me to this now?
+      2) What's the cost of waiting? 3) Is this fear or wisdom? 4) What would
+      obedience look like? We never want anyone to move forward without peace.
+      Can I ask - what specifically do you need clarity on? Sometimes talking
+      it through helps us hear God's voice more clearly.
+
+  trust:
+    trigger: "don't know you|credentials|experience|proven"
+    response: |
+      That's a fair and wise question! Here's our story: [Testimony of
+      founder's journey, experience, and call to this work]. We've worked with
+      [number] ministries and businesses, seeing [results]. But more than
+      credentials, we pray Scripture over every client, we operate with
+      integrity, and we measure success by Kingdom fruit, not just metrics.
+      Want to talk to past clients? We'd be happy to connect you with leaders
+      who've been through our process.
+
+  theology:
+    trigger: "prosperity gospel|concerned about|biblical|wrong"
+    response: |
+      I'm so glad you're thinking biblically! Let me be clear: This isn't
+      prosperity gospel. We believe in faithful stewardship, not "name it
+      and claim it." We believe God calls us to excellence, not exploitation.
+      We measure success by faithfulness and Kingdom fruit, not just dollars.
+      Everything we teach is rooted in Scripture - Jesus talked more about
+      money and stewardship than almost any other topic. We want to help you
+      steward what God has given you for His glory. Does that resonate?
+
+  secular:
+    trigger: "business coaching|regular consultant|why faith-based"
+    response: |
+      Great question! Regular business coaching can be excellent, and we
+      celebrate that. But here's the difference: We start with "What is God
+      calling you to?" not just "What will make money?" We integrate biblical
+      principles, we pray, we measure success through Kingdom lens. If you're
+      a believer, your business or ministry isn't just about growth - it's
+      about faithfulness, stewardship, and advancing God's Kingdom. You need
+      someone who understands both business AND faith. That's what we offer.
+
+special_considerations:
+  ministry_discount: true
+  church_plant_scholarship: true
+  missionary_support: true
+
+  payment_sensitivity:
+    approach: "Grace-filled, never pushy"
+    principle: "Trust God to provide for those He calls"
+    flexibility: "Will work with genuine financial constraints"
+
+  spiritual_integration:
+    prayer: "Begin and end every call with prayer"
+    scripture: "Root all advice in biblical truth"
+    discernment: "Help clients hear God's voice"
+    community: "Connect to body of Christ"
+
+metadata:
+  created: 2025-10-29
+  author: Daniel Alvarez
+  version: 1.0.0
+  status: active
+  ministry_focused: true

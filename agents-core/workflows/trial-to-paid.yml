@@ -1,0 +1,499 @@
+# Trial to Paid Workflow
+# Automated workflow from trial completion to paying customer
+
+name: trial-to-paid
+version: 1.0.0
+type: workflow
+priority: high
+
+description: |
+  Conversion-focused workflow that nurtures trial clients through to
+  paid customers with personalized follow-up, objection handling,
+  and automated closing support.
+
+trigger:
+  event: trial_completed
+  source: public.trials (UPDATE)
+  conditions:
+    - trial.status == 'completed'
+    - trial.outcome IS NULL (not yet converted)
+    - trial.scheduled_date <= NOW()
+
+workflow_stages:
+  stage_1:
+    name: trial_completed
+    description: Trial service completed, collect initial feedback
+    agent: trial-manager
+    actions:
+      - Mark trial as completed
+      - Create workflow instance
+      - Prepare feedback survey
+      - Log completion time
+
+    outputs:
+      - trial_id: uuid
+      - lead_id: uuid
+      - completion_time: timestamptz
+
+    transitions:
+      success: stage_2 (feedback_collection)
+
+    timeout: 1 minute
+
+  stage_2:
+    name: feedback_collection
+    description: Request immediate post-trial feedback
+    agent: trial-manager
+    actions:
+      - Send feedback survey (email/SMS)
+      - Ask 3 key questions:
+        1. How was your trial experience? (1-10)
+        2. What did you like most?
+        3. Ready to schedule regular service?
+      - Wait for response or timeout
+
+    timing: Send within 1 hour of trial completion
+
+    response_handling:
+      enthusiastic (score 8-10):
+        - Fast-track to closing
+        - High conversion probability
+        - Prioritize follow-up
+
+      positive (score 6-7):
+        - Standard closing flow
+        - Address concerns
+        - Build value
+
+      lukewarm (score 1-5):
+        - Identify issues
+        - Recovery attempt
+        - Extended nurture
+
+      no_response:
+        - Gentle reminder after 4 hours
+        - Follow up next day
+        - Proceed to script generation
+
+    transitions:
+      response_received: stage_3 (script_generation)
+      timeout: stage_3 (generate with default context)
+
+    timeout: 24 hours
+
+  stage_3:
+    name: script_generation
+    description: Generate personalized closing script
+    agent: closer-script
+    actions:
+      - Fetch all CQI data
+      - Include trial feedback
+      - Analyze pain points mentioned
+      - Identify objection patterns
+      - Generate custom script with:
+        - Personalized greeting
+        - Value recap
+        - Pricing presentation
+        - Objection handlers
+        - Closing questions
+
+    inputs:
+      - cqi_session_data: from public.cqi_responses
+      - trial_feedback: from stage_2
+      - brand_context: from context-librarian
+      - service_details: performed during trial
+
+    outputs:
+      - closer_script_id: uuid
+      - recommended_package: string
+      - pricing_options: array
+      - objection_handlers: array
+      - urgency_factors: array
+
+    transitions:
+      success: stage_4 (assign_closer)
+
+    timeout: 15 minutes
+
+  stage_4:
+    name: assign_closer
+    description: Assign to human closer, schedule call
+    agent: trial-manager
+    actions:
+      - Determine best closer based on:
+        - Brand specialization
+        - Availability
+        - Historical conversion rate
+        - Service type expertise
+      - Send closer notification with:
+        - Lead profile
+        - CQI summary
+        - Trial outcome
+        - Recommended script
+        - Suggested timing
+      - Propose callback times to lead
+
+    closer_assignment_logic:
+      sotsvc:
+        primary: Daniel Alvarez
+        backup: Operations Team
+
+      boss-of-clean:
+        primary: Provider Network
+        backup: Daniel Alvarez
+
+      beatslave:
+        primary: Daniel Alvarez (self)
+
+      temple-builder:
+        primary: Daniel Alvarez
+        backup: Ministry Partners
+
+    transitions:
+      closer_assigned: stage_5 (closing_call_scheduled)
+      no_closer_available: stage_delay (retry in 2 hours)
+
+    timeout: 4 hours
+
+  stage_5:
+    name: closing_call_scheduled
+    description: Callback scheduled with lead
+    agent: trial-manager
+    actions:
+      - Book closing call appointment
+      - Send calendar invite
+      - Provide prep materials to lead:
+        - Service packages overview
+        - Pricing sheet
+        - Customer testimonials
+      - Remind closer 15 min before call
+
+    optimal_timing:
+      - Same day as trial (if possible)
+      - Within 24-48 hours max
+      - Strike while excitement high
+
+    transitions:
+      call_scheduled: stage_6 (closing_call_awaiting)
+
+    timeout: 24 hours
+
+  stage_6:
+    name: closing_call_awaiting
+    description: Waiting for scheduled closing call
+    agent: workflow-monitor
+    actions:
+      - Monitor for call completion
+      - Send reminder to closer
+      - Be available for questions
+
+    monitoring:
+      - Check call status every hour
+      - Alert if call overdue
+      - Track no-shows
+
+    transitions:
+      call_completed: stage_7 (proposal_stage)
+      no_show: stage_recovery (reschedule)
+      rescheduled: stage_6 (await new time)
+
+    timeout: 72 hours (from scheduled time)
+
+  stage_7:
+    name: proposal_stage
+    description: Pricing presented, awaiting decision
+    agent: closer-script
+    actions:
+      - Log call outcome
+      - Capture closer notes
+      - Record objections raised
+      - Note package interest
+      - Send formal proposal email
+
+    proposal_email_includes:
+      - Personalized greeting
+      - Recap of call discussion
+      - Service packages with pricing
+      - Frequency discount breakdown
+      - Testimonials
+      - Guarantee terms
+      - Clear CTA: "Ready to get started?"
+      - Calendar link for first service
+      - Payment link (if applicable)
+
+    decision_paths:
+      verbal_yes:
+        - Fast-track to stage_8 (contract_signing)
+
+      needs_to_think:
+        - Set follow-up (24-48 hours)
+        - Address concerns
+        - Stay in stage_7
+
+      objection_raised:
+        - Use objection handler
+        - Provide additional info
+        - Schedule follow-up
+        - Stay in stage_7
+
+      verbal_no:
+        - Understand reason
+        - Attempt recovery
+        - If hard no: stage_decline
+
+    transitions:
+      accepted: stage_8 (contract_signing)
+      objection_handled: stage_7 (stay, set reminder)
+      declined: stage_decline
+
+    timeout: 7 days
+
+  stage_8:
+    name: contract_signing
+    description: Execute service agreement
+    agent: trial-manager
+    actions:
+      - Send service agreement
+        - DocuSign (future)
+        - Email PDF (current)
+      - Review terms with client
+      - Answer questions
+      - Collect signature
+
+    agreement_includes:
+      - Service details
+      - Frequency
+      - Pricing
+      - Cancellation policy
+      - Guarantee terms
+      - Payment terms
+
+    transitions:
+      signed: stage_9 (payment_collection)
+      questions: stage_8 (stay, address concerns)
+      abandoned: stage_recovery (follow up)
+
+    timeout: 48 hours
+
+  stage_9:
+    name: payment_collection
+    description: Collect first payment and set up billing
+    agent: trial-manager
+    integrations:
+      stripe:
+        actions:
+          - Create customer record
+          - Set up payment method
+          - Collect first payment
+          - Set up recurring billing (if applicable)
+
+    payment_flows:
+      subscription (recurring):
+        - Set up autopay
+        - Collect first payment
+        - Schedule future charges
+
+      one_time:
+        - Collect payment for first service
+        - Option to set up autopay
+
+      invoice (B2B):
+        - Send invoice
+        - Set payment terms (Net 15/30)
+        - Track payment
+
+    transitions:
+      payment_collected: stage_10 (onboarding_start)
+      payment_failed: stage_payment_retry
+      payment_declined: stage_recovery
+
+    timeout: 24 hours
+
+  stage_10:
+    name: onboarding_start
+    description: Welcome customer, schedule first service
+    agent: trial-manager
+    actions:
+      - Send welcome package:
+        - Thank you message
+        - What to expect
+        - Team introduction
+        - Contact information
+        - Prep instructions
+      - Schedule first regular service
+      - Add to customer portal
+      - Create customer record in CRM
+
+    first_service_scheduling:
+      - Offer preferred days/times
+      - Book within 7-14 days
+      - Send confirmation
+      - Assign team/provider
+
+    transitions:
+      onboarding_complete: stage_11 (workflow_complete)
+
+    timeout: 48 hours
+
+  stage_11:
+    name: workflow_complete
+    description: Conversion complete, customer onboarded
+    agent: session-closer
+    actions:
+      - Update trial outcome: converted
+      - Mark workflow status: completed
+      - Generate conversion report
+      - Log revenue
+      - Celebrate win (notify team)
+      - Schedule customer success check-in (30 days)
+
+    outputs:
+      - conversion_status: success
+      - customer_id: uuid
+      - monthly_value: integer
+      - lifetime_value_projected: integer
+      - conversion_duration: integer (hours)
+
+    metrics:
+      - Trial to paid rate
+      - Days to conversion
+      - Revenue per conversion
+      - Package mix
+
+    timeout: N/A (terminal state)
+
+fallback_stages:
+  stage_decline:
+    name: conversion_declined
+    description: Lead declined, log reason and nurture
+    agent: closer-script
+    actions:
+      - Capture decline reason
+      - Categorize (price|timing|competitor|not_interested)
+      - Send gracious response
+      - Offer:
+        - To stay in touch
+        - Newsletter subscription
+        - Referral incentive
+      - Add to long-term nurture
+      - Mark trial outcome: declined
+
+    decline_analysis:
+      - Log reason
+      - Track patterns
+      - Inform pricing strategy
+      - Competitive intelligence
+
+    exit: workflow_complete (declined status)
+
+  stage_recovery:
+    name: recovery_attempt
+    description: Re-engagement after no-show or abandonment
+    agent: trial-manager
+    actions:
+      - Send friendly check-in
+      - Address concerns
+      - Offer incentive (if appropriate)
+      - Provide easy next step
+
+    recovery_tactics:
+      no_show:
+        - "We missed you! Can we reschedule?"
+        - Offer flexible timing
+        - Address barriers
+
+      abandoned_proposal:
+        - "Any questions about the proposal?"
+        - Offer to discuss
+        - Provide social proof
+
+      abandoned_contract:
+        - "Need help with the agreement?"
+        - Simplify process
+        - Address concerns
+
+    max_attempts: 2
+    exit_on_failure: stage_decline
+
+  stage_payment_retry:
+    name: payment_retry_handler
+    description: Handle failed payment attempts
+    agent: trial-manager
+    actions:
+      - Notify customer of failure
+      - Request updated payment method
+      - Retry payment
+      - Offer alternative methods
+
+    max_retries: 3
+    exit_on_failure: stage_decline (payment_issues)
+
+  stage_delay:
+    name: temporary_delay
+    description: Pause workflow, resume later
+    agent: workflow-monitor
+    actions:
+      - Log delay reason
+      - Set resume time
+      - Notify stakeholders
+
+    exit: resume from paused stage
+
+monitoring:
+  sla_targets:
+    feedback_to_script: 24 hours
+    trial_to_closing_call: 48 hours
+    proposal_to_decision: 7 days
+    total_trial_to_paid: 14 days
+
+  success_metrics:
+    - Conversion rate: Target 50%
+    - Time to conversion: Target 7 days
+    - Average deal value: Track by brand
+    - Close rate by closer: Track performance
+
+  failure_analysis:
+    - Common decline reasons
+    - Drop-off points
+    - Objection patterns
+    - Recovery success rates
+
+integrations:
+  supabase:
+    triggers:
+      - Listen for UPDATE on public.trials (status=completed)
+    writes:
+      - public.trials (outcome)
+      - public.closer_scripts
+      - public.workflow_instances
+      - public.customers (new table)
+
+  stripe:
+    - Create customer
+    - Collect payment
+    - Set up subscriptions
+
+  agents:
+    - trial-manager (coordination)
+    - closer-script (script generation)
+    - session-closer (finalization)
+    - workflow-monitor (tracking)
+
+  notifications:
+    - Email (proposals, agreements, confirmations)
+    - SMS (reminders)
+    - Calendar (appointments)
+    - Team alerts (conversions, issues)
+
+execution:
+  runtime: python
+  framework: langchain
+  orchestration: event-driven
+  human_in_loop: closing call stage
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active
+  estimated_duration: 7-14 days
+  success_rate_target: 50%

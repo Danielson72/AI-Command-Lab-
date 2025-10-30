@@ -1,0 +1,289 @@
+# Context Librarian Agent
+# Manages brand contexts, templates, and knowledge retrieval
+
+name: context-librarian
+version: 1.0.0
+type: system
+priority: high
+
+description: |
+  Centralized knowledge management agent that loads, caches, and serves
+  brand-specific contexts, templates, FAQs, and configurations to other agents.
+
+responsibilities:
+  - Brand context loading and caching
+  - Template management
+  - FAQ and knowledge base retrieval
+  - Service catalog maintenance
+  - Pricing matrix management
+  - Context versioning
+
+knowledge_base:
+  brands:
+    sotsvc:
+      context_path: projects/sotsvc/.agents/context/
+      files:
+        - brand-profile.yml
+        - services.yml
+        - pricing.yml
+        - faqs.yml
+        - objection-handlers.yml
+        - success-stories.yml
+
+    boss-of-clean:
+      context_path: projects/boss-of-clean/.agents/context/
+      files:
+        - brand-profile.yml
+        - services.yml
+        - marketplace-providers.yml
+        - pricing-calculator.yml
+        - faqs.yml
+
+    beatslave:
+      context_path: projects/beatslave/.agents/context/
+      files:
+        - brand-profile.yml
+        - services.yml
+        - portfolio.yml
+        - pricing.yml
+        - genre-templates.yml
+
+    temple-builder:
+      context_path: projects/temple-builder/.agents/context/
+      files:
+        - brand-profile.yml
+        - services.yml
+        - ministry-frameworks.yml
+        - faith-principles.yml
+        - testimonials.yml
+
+caching_strategy:
+  cache_duration:
+    hot: 5 minutes         # Frequently accessed (active sessions)
+    warm: 30 minutes       # Moderately accessed (brand configs)
+    cold: 2 hours          # Rarely changed (templates, FAQs)
+
+  cache_invalidation:
+    manual: Admin command to clear specific cache
+    automatic: On file modification detected
+    scheduled: Daily at 3 AM for full refresh
+
+  cache_warming:
+    on_startup: Load all brand contexts
+    predictive: Preload context when lead detected
+    lazy: Load on first request per session
+
+template_types:
+  cqi_questions:
+    - Initial assessment questions
+    - Budget qualification
+    - Timeline questions
+    - Decision authority
+    - Service-specific questions
+
+  email_templates:
+    - Welcome email
+    - Trial confirmation
+    - Reminder emails
+    - Follow-up sequences
+    - Thank you messages
+
+  script_templates:
+    - Greeting scripts
+    - Value propositions
+    - Objection handlers
+    - Closing scripts
+    - Post-sale onboarding
+
+  document_templates:
+    - Service agreements
+    - Proposals
+    - Invoices
+    - SOPs
+
+actions:
+  load_brand_context:
+    input:
+      - brand: string
+      - context_type: string (all|services|pricing|faqs)
+
+    process:
+      1. Check cache for requested context
+      2. If cache miss, load from file system
+      3. Validate context schema
+      4. Cache loaded context
+      5. Return context object
+
+    output:
+      - context: object
+      - cached: boolean
+      - loaded_at: timestamptz
+      - expires_at: timestamptz
+
+  get_template:
+    input:
+      - brand: string
+      - template_type: string
+      - template_name: string
+      - variables: object (optional)
+
+    process:
+      1. Retrieve template from cache/file
+      2. If variables provided, render template
+      3. Return rendered content
+
+    output:
+      - template_content: string
+      - rendered: boolean
+      - variables_used: array
+
+  get_faq_answer:
+    input:
+      - brand: string
+      - question: string
+      - context: string (optional)
+
+    process:
+      1. Load brand FAQ database
+      2. Use semantic search to find best match
+      3. Return answer with confidence score
+      4. Log query for FAQ improvement
+
+    output:
+      - answer: string
+      - confidence: decimal (0-1)
+      - source: string
+      - related_questions: array
+
+  get_service_info:
+    input:
+      - brand: string
+      - service_name: string
+
+    process:
+      1. Load service catalog for brand
+      2. Find matching service
+      3. Return full service details
+
+    output:
+      - service: object
+        - name: string
+        - description: string
+        - duration: integer
+        - price_range: object
+        - requirements: array
+        - benefits: array
+        - ideal_for: array
+
+  get_pricing:
+    input:
+      - brand: string
+      - service: string
+      - frequency: string (one-time|weekly|biweekly|monthly)
+      - property_details: object (optional)
+
+    process:
+      1. Load pricing matrix
+      2. Calculate base price
+      3. Apply frequency discount
+      4. Add modifiers (size, condition, extras)
+      5. Return pricing options
+
+    output:
+      - pricing_options: array
+        - package_name: string
+        - price: integer
+        - savings: integer
+        - frequency: string
+        - includes: array
+
+  search_knowledge_base:
+    input:
+      - brand: string
+      - query: string
+      - limit: integer (default: 5)
+
+    process:
+      1. Load brand knowledge base
+      2. Perform semantic search
+      3. Rank results by relevance
+      4. Return top matches
+
+    output:
+      - results: array
+        - title: string
+        - content: string
+        - relevance_score: decimal
+        - source: string
+
+versioning:
+  context_versions:
+    tracking: Git-based versioning
+    rollback: Support revert to previous version
+    branching: Support brand-specific overrides
+
+  changelog:
+    maintained: true
+    location: projects/{brand}/.agents/CHANGELOG.md
+    format: |
+      ## [Version] - Date
+      ### Added
+      - New feature
+      ### Changed
+      - Modified feature
+      ### Removed
+      - Deprecated feature
+
+database_schema:
+  table: public.knowledge_base
+  columns:
+    - id: uuid
+    - brand: string
+    - category: string (service|pricing|faq|template)
+    - title: string
+    - content: text
+    - metadata: jsonb
+    - version: integer
+    - active: boolean
+    - created_at: timestamptz
+    - updated_at: timestamptz
+
+  indexes:
+    - brand, category
+    - full-text search on content
+    - active, updated_at
+
+integrations:
+  file_system:
+    - Read YAML/JSON configs
+    - Monitor file changes
+    - Handle file updates
+
+  supabase:
+    - Store knowledge base
+    - Query for dynamic content
+    - Log access patterns
+
+  cache:
+    - Redis (future)
+    - In-memory (current)
+
+  ai_search:
+    - Semantic search via Claude
+    - Vector embeddings (future)
+
+performance:
+  metrics:
+    - cache_hit_rate: Target 80%+
+    - avg_load_time: Target < 100ms
+    - context_size: Monitor for optimization
+
+  optimization:
+    - Lazy loading for large contexts
+    - Compression for cached data
+    - Incremental updates
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active

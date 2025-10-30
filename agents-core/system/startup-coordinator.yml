@@ -1,0 +1,271 @@
+# Startup Coordinator Agent
+# Initializes the CQI system and ensures all dependencies are ready
+
+name: startup-coordinator
+version: 1.0.0
+type: system
+priority: critical
+
+description: |
+  System initialization agent that validates environment, loads configurations,
+  verifies database connections, and ensures all agents are ready before
+  processing any CQI sessions.
+
+responsibilities:
+  - Environment validation
+  - Database connection testing
+  - Agent health checks
+  - Configuration loading
+  - Resource allocation
+  - Graceful degradation handling
+
+startup_sequence:
+  - step: 1
+    name: environment_check
+    actions:
+      - Verify all required environment variables
+      - Check API keys validity
+      - Validate file system permissions
+      - Confirm Python dependencies installed
+    required_vars:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - ANTHROPIC_API_KEY
+      - BRAND_CONTEXT_PATH
+      - SMTP_HOST (optional)
+      - TWILIO_ACCOUNT_SID (optional)
+    fail_action: abort_startup
+
+  - step: 2
+    name: database_connection
+    actions:
+      - Test Supabase connection
+      - Verify required tables exist
+      - Check RLS policies (future)
+      - Validate stored procedures
+    required_tables:
+      - public.leads
+      - public.cqi_templates
+      - public.cqi_responses
+      - public.trials
+      - public.services
+      - public.closer_scripts
+      - public.audit_reports
+    fail_action: abort_startup
+
+  - step: 3
+    name: agent_registration
+    actions:
+      - Load all agent YAML configs
+      - Validate agent schemas
+      - Check agent dependencies
+      - Register agents in system
+    agents_to_register:
+      core:
+        - cqi-conductor
+        - cqi-scorer
+        - trial-manager
+        - closer-script
+        - audit-report
+      system:
+        - startup-coordinator (self)
+        - context-librarian
+        - session-closer
+        - kingdom-closer
+      utils:
+        - dashboard
+        - workflow-monitor
+    fail_action: warn_and_continue
+
+  - step: 4
+    name: load_brand_configs
+    actions:
+      - Load brand-specific configurations
+      - Validate service catalogs
+      - Load pricing matrices
+      - Cache templates
+    brands:
+      - sotsvc
+      - boss-of-clean
+      - beatslave
+      - temple-builder
+    fail_action: partial_startup
+
+  - step: 5
+    name: health_checks
+    actions:
+      - Ping external APIs
+      - Test notification channels
+      - Verify storage access
+      - Check rate limits
+    services:
+      - Anthropic Claude API
+      - Supabase API
+      - Stripe API (optional)
+      - Twilio API (optional)
+    fail_action: warn_and_continue
+
+  - step: 6
+    name: ready_signal
+    actions:
+      - Log successful startup
+      - Update system status
+      - Send ready notification
+      - Enable request handling
+
+health_monitoring:
+  continuous_checks:
+    - database_connection: every 30s
+    - api_rate_limits: every 60s
+    - agent_responsiveness: every 5min
+    - disk_space: every 10min
+
+  failure_thresholds:
+    database_timeout: 3 consecutive failures
+    api_errors: 5 per minute
+    agent_timeout: 10 seconds
+    memory_usage: 90% of available
+
+  recovery_actions:
+    database_reconnect:
+      - Close stale connections
+      - Create new connection pool
+      - Verify with test query
+
+    rate_limit_handling:
+      - Queue incoming requests
+      - Switch to backup provider
+      - Notify operations team
+
+    agent_restart:
+      - Gracefully stop agent
+      - Clear agent cache
+      - Reinitialize agent
+      - Resume operations
+
+graceful_degradation:
+  modes:
+    full_operation:
+      description: All systems operational
+      capabilities: 100%
+
+    reduced_operation:
+      description: Some optional features unavailable
+      disabled:
+        - SMS notifications
+        - Real-time analytics
+        - Automated follow-ups
+      enabled:
+        - Core CQI flow
+        - Database operations
+        - Email notifications
+
+    emergency_mode:
+      description: Critical functions only
+      disabled:
+        - All automation
+        - AI agents
+        - Background jobs
+      enabled:
+        - Manual lead entry
+        - Basic database access
+        - Emergency notifications
+
+    maintenance_mode:
+      description: System undergoing maintenance
+      actions:
+        - Queue all incoming requests
+        - Display maintenance message
+        - Log all activities for replay
+        - Notify on completion
+
+actions:
+  initialize_system:
+    process:
+      1. Run startup sequence steps 1-6
+      2. Handle any failures per fail_action
+      3. Determine operational mode
+      4. Log initialization results
+      5. Return system status
+
+    output:
+      - status: enum (ready|degraded|failed)
+      - mode: enum (full|reduced|emergency|maintenance)
+      - available_agents: array
+      - warnings: array
+      - timestamp: timestamptz
+
+  perform_health_check:
+    input:
+      - target: string (database|api|agent|all)
+
+    output:
+      - healthy: boolean
+      - details: object
+      - recommendations: array
+
+  restart_component:
+    input:
+      - component: string (agent_name|database|api_client)
+      - reason: string
+
+    process:
+      1. Log restart request
+      2. Gracefully stop component
+      3. Clear caches/connections
+      4. Reinitialize component
+      5. Verify health
+      6. Resume operations
+
+    output:
+      - success: boolean
+      - new_status: string
+      - downtime: integer (seconds)
+
+logging:
+  levels:
+    - CRITICAL: System cannot operate
+    - ERROR: Feature failure, degraded operation
+    - WARNING: Potential issues, reduced performance
+    - INFO: Normal operations, state changes
+    - DEBUG: Detailed diagnostics
+
+  destinations:
+    - console: Development mode
+    - file: /var/log/cqi-system.log
+    - supabase: public.system_logs table
+    - external: Datadog/Sentry (future)
+
+notifications:
+  startup_success:
+    to: operations@sotsvc.com
+    subject: "CQI System Ready"
+    body: |
+      System initialized successfully at {timestamp}
+      Mode: {mode}
+      Agents: {agent_count} registered
+      Database: Connected
+      APIs: {api_status}
+
+  startup_failure:
+    to: emergency@sotsvc.com
+    priority: high
+    subject: "CRITICAL: CQI System Startup Failed"
+    body: |
+      System failed to initialize at {timestamp}
+      Error: {error_message}
+      Failed Step: {failed_step}
+      Action Required: Manual intervention
+
+  degraded_operation:
+    to: operations@sotsvc.com
+    subject: "CQI System Running in Degraded Mode"
+    body: |
+      System operating with reduced capabilities
+      Disabled Features: {disabled_features}
+      Estimated Recovery: {recovery_time}
+
+metadata:
+  author: Daniel Alvarez
+  created: 2025-10-29
+  status: active
