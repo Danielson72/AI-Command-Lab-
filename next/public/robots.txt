@@ -1,0 +1,6 @@
+# AI Command Lab robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://aicommandlab.com/sitemap.xml
