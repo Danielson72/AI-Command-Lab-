@@ -1,0 +1,66 @@
+/* Boss of Clean Platform - Global Styles */
+
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+/* Boss of Clean Brand Colors */
+:root {
+  --boc-blue: #007FFF;
+  --boc-dark: #1a1a1a;
+  --boc-light: #ffffff;
+}
+
+/* Hero Section - Mobile First with WCAG AA Contrast */
+.hero-tagline {
+  color: var(--boc-blue);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* Contrast boost */
+  background: rgba(255, 255, 255, 0.9); /* Fallback background */
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 700;
+}
+
+/* CEO Car Mascot - Enhanced Visibility */
+.ceo-car-mascot {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); /* Visibility boost */
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .hero-tagline {
+    font-size: 1.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Stronger shadow for mobile */
+  }
+
+  .ceo-car-mascot {
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); /* Enhanced mobile visibility */
+  }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  .hero-tagline {
+    font-size: 2rem;
+  }
+}
+
+/* Utility Classes */
+.text-boc-blue {
+  color: var(--boc-blue);
+}
+
+.bg-boc-blue {
+  background-color: var(--boc-blue);
+}
