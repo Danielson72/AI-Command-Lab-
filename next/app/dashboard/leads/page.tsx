@@ -76,8 +76,8 @@ export default function LeadsPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Leads</h1>
-        <span style={{ color: '#666', fontSize: '0.85rem' }}>
+        <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 700 }}>Leads</h1>
+        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>
           {leads.length} lead{leads.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -89,12 +89,13 @@ export default function LeadsPage() {
           placeholder="Search name, email, phone..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={styles.searchInput}
+          className="acl-input"
+          style={{ flex: 1, minWidth: '200px' }}
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={styles.select}
+          className="acl-select"
         >
           <option value="all">All Leads</option>
           <option value="new">New (Not Contacted)</option>
@@ -104,17 +105,17 @@ export default function LeadsPage() {
 
       {/* Table */}
       {loading ? (
-        <p style={{ color: '#666' }}>Loading leads...</p>
+        <p style={{ color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif' }}>Loading leads...</p>
       ) : leads.length === 0 ? (
-        <div style={styles.empty}>
-          <p style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>No leads yet</p>
-          <p style={{ color: '#666', fontSize: '0.85rem' }}>
-            Leads from your SOTSVC and TCE contact forms will appear here 
+        <div className="glass-card animate-in" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
+          <p style={{ fontSize: '1rem', marginBottom: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>No leads yet</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>
+            Leads from your SOTSVC and TCE contact forms will appear here
             once the leads table is connected to your n8n workflows.
           </p>
         </div>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
+        <div className="glass-card animate-in" style={{ overflowX: 'auto', padding: '0' }}>
           <table style={styles.table}>
             <thead>
               <tr>
@@ -134,7 +135,7 @@ export default function LeadsPage() {
                   <td style={styles.td}>{lead.email || '—'}</td>
                   <td style={styles.td}>{lead.phone || '—'}</td>
                   <td style={styles.td}>
-                    <span style={styles.badge}>{lead.source || 'web'}</span>
+                    <span className="badge badge-blue">{lead.source || 'web'}</span>
                   </td>
                   <td style={styles.td}>{lead.brand_name || '—'}</td>
                   <td style={styles.td}>
@@ -143,10 +144,13 @@ export default function LeadsPage() {
                   <td style={styles.td}>
                     <button
                       onClick={() => toggleContacted(lead.id, lead.contacted)}
+                      className={lead.contacted ? 'badge badge-green' : 'badge'}
                       style={{
-                        ...styles.toggleBtn,
-                        background: lead.contacted ? '#166534' : '#333',
-                        color: lead.contacted ? '#86efac' : '#888',
+                        background: lead.contacted ? 'var(--accent-success-bg)' : 'var(--bg-input)',
+                        color: lead.contacted ? 'var(--accent-success)' : 'var(--text-muted)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.25rem 0.6rem',
                       }}
                     >
                       {lead.contacted ? '✓ Yes' : 'No'}
@@ -163,67 +167,28 @@ export default function LeadsPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  searchInput: {
-    flex: 1,
-    minWidth: '200px',
-    padding: '0.55rem 0.75rem',
-    borderRadius: '6px',
-    border: '1px solid #333',
-    background: '#111',
-    color: '#fff',
-    fontSize: '0.85rem',
-    outline: 'none',
-  },
-  select: {
-    padding: '0.55rem 0.75rem',
-    borderRadius: '6px',
-    border: '1px solid #333',
-    background: '#111',
-    color: '#fff',
-    fontSize: '0.85rem',
-  },
-  empty: {
-    padding: '3rem 2rem',
-    textAlign: 'center' as const,
-    background: '#111',
-    borderRadius: '8px',
-    border: '1px solid #222',
-  },
   table: {
     width: '100%',
     borderCollapse: 'collapse' as const,
     fontSize: '0.85rem',
+    fontFamily: 'DM Sans, sans-serif',
   },
   th: {
     textAlign: 'left' as const,
-    padding: '0.6rem 0.75rem',
-    borderBottom: '1px solid #222',
-    color: '#666',
+    padding: '0.75rem 1rem',
+    borderBottom: '1px solid var(--border-glass)',
+    color: 'var(--text-muted)',
     fontWeight: 500,
     fontSize: '0.75rem',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.05em',
+    background: 'var(--bg-card)',
   },
   tr: {
-    borderBottom: '1px solid #1a1a1a',
+    borderBottom: '1px solid var(--border-glass)',
   },
   td: {
-    padding: '0.6rem 0.75rem',
-    color: '#ccc',
-  },
-  badge: {
-    padding: '0.15rem 0.5rem',
-    borderRadius: '4px',
-    background: '#1a1a2e',
-    color: '#818cf8',
-    fontSize: '0.75rem',
-  },
-  toggleBtn: {
-    padding: '0.25rem 0.6rem',
-    borderRadius: '4px',
-    border: 'none',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    fontWeight: 500,
+    padding: '0.75rem 1rem',
+    color: 'var(--text-secondary)',
   },
 }

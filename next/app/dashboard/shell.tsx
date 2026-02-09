@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -22,6 +23,23 @@ export function DashboardShell({
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const savedTheme = localStorage.getItem('acl-theme') as 'dark' | 'light' | null
+    const initialTheme = savedTheme || 'dark'
+    setTheme(initialTheme)
+    document.documentElement.setAttribute('data-theme', initialTheme)
+  }, [])
+
+  function toggleTheme() {
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    localStorage.setItem('acl-theme', newTheme)
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -34,9 +52,20 @@ export function DashboardShell({
       {/* Sidebar */}
       <aside style={styles.sidebar}>
         <div style={styles.sidebarHeader}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <AclShieldIcon size={22} variant="sidebar" />
-            <h2 style={styles.sidebarLogo}>ACL</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <AclShieldIcon size={22} variant="sidebar" />
+              <h2 style={styles.sidebarLogo}>ACL</h2>
+            </div>
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                style={styles.themeToggle}
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? '☀' : '☾'}
+              </button>
+            )}
           </div>
           <span style={styles.sidebarTagline}>Command Lab</span>
         </div>
@@ -106,7 +135,7 @@ const styles: Record<string, React.CSSProperties> = {
   sidebarLogo: {
     fontSize: '1.25rem',
     fontWeight: 700,
-    color: 'var(--acl-blue, #0070F3)',
+    color: 'var(--accent-primary)',
     margin: 0,
     fontFamily: 'Outfit, sans-serif',
   },
@@ -115,6 +144,20 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--text-muted)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
+  },
+  themeToggle: {
+    width: '32px',
+    height: '24px',
+    borderRadius: '12px',
+    border: '1px solid var(--border-input)',
+    background: 'var(--bg-input)',
+    color: 'var(--text-secondary)',
+    fontSize: '0.85rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
   },
   nav: {
     flex: 1,

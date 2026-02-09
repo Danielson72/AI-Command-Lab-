@@ -6,10 +6,10 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+      <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
         Dashboard
       </h1>
-      <p style={{ color: '#888', marginBottom: '2rem' }}>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontFamily: 'DM Sans, sans-serif' }}>
         Welcome back, {user?.email?.split('@')[0]}.
       </p>
 
@@ -18,25 +18,22 @@ export default async function DashboardPage() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '1rem',
       }}>
-        <StatCard label="Total Leads" value="—" />
-        <StatCard label="This Week" value="—" />
-        <StatCard label="Contacted" value="—" />
-        <StatCard label="Active Brands" value="—" />
+        <StatCard label="Total Leads" value="—" delay={1} />
+        <StatCard label="This Week" value="—" delay={2} />
+        <StatCard label="Contacted" value="—" delay={3} />
+        <StatCard label="Active Brands" value="—" delay={4} />
       </div>
 
-      <div style={{
-        marginTop: '2rem',
-        padding: '1.5rem',
-        background: '#141414',
-        borderRadius: '8px',
-        border: '1px solid #222',
-      }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+      <div
+        className="glass-card stat-card animate-in animate-in-delay-5"
+        style={{ marginTop: '2rem', padding: '1.5rem' }}
+      >
+        <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
           Phase 2: Lead Engine
         </h2>
-        <p style={{ color: '#888', fontSize: '0.85rem', lineHeight: 1.6 }}>
-          Your lead capture workflows are active. The Lead Dashboard is loading 
-          data from your n8n workflows via Supabase. Navigate to Leads to see 
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, fontFamily: 'DM Sans, sans-serif' }}>
+          Your lead capture workflows are active. The Lead Dashboard is loading
+          data from your n8n workflows via Supabase. Navigate to Leads to see
           incoming leads across all your brands.
         </p>
       </div>
@@ -44,18 +41,13 @@ export default async function DashboardPage() {
   )
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value, delay }: { label: string; value: string; delay: number }) {
   return (
-    <div style={{
-      padding: '1.25rem',
-      background: '#141414',
-      borderRadius: '8px',
-      border: '1px solid #222',
-    }}>
-      <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.35rem' }}>
+    <div className={`glass-card stat-card animate-in animate-in-delay-${delay}`}>
+      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.35rem', fontFamily: 'DM Sans, sans-serif' }}>
         {label}
       </div>
-      <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+      <div style={{ fontSize: '1.5rem', fontWeight: 700, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
         {value}
       </div>
     </div>
