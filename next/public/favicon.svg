@@ -1,5 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <path d="M16 2 L28 8 L28 16 C28 24 22 29 16 31 C10 29 4 24 4 16 L4 8 Z" fill="#1a1a2e" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/>
-  <circle cx="16" cy="15" r="5" fill="#0070F3"/>
-  <circle cx="14.5" cy="13.5" r="1.5" fill="white" opacity="0.35"/>
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E0E0E0"/>
+      <stop offset="50%" stop-color="#A0A0A0"/>
+      <stop offset="100%" stop-color="#505050"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#0080C0"/>
+    </radialGradient>
+  </defs>
+  <!-- Chrome shield -->
+  <path d="M16 2 L28 8 L28 16 C28 24 22 29 16 31 C10 29 4 24 4 16 L4 8 Z" fill="url(#chrome)" stroke="#707070" stroke-width="0.5"/>
+  <!-- Black interior -->
+  <path d="M16 5 L25 9.5 L25 16 C25 22.5 20 26.5 16 28 C12 26.5 7 22.5 7 16 L7 9.5 Z" fill="#0A0A0A"/>
+  <!-- Blue orb -->
+  <circle cx="16" cy="15" r="4" fill="url(#orb)"/>
+  <!-- Vertical crosshair -->
+  <line x1="16" y1="7" x2="16" y2="10" stroke="#00D4FF" stroke-width="1.25" opacity="0.8"/>
+  <line x1="16" y1="20" x2="16" y2="24" stroke="#00D4FF" stroke-width="1.25" opacity="0.8"/>
+  <!-- Horizontal reticle marks -->
+  <line x1="9" y1="15" x2="11" y2="15" stroke="#00E5FF" stroke-width="1.25" opacity="0.9"/>
+  <line x1="21" y1="15" x2="23" y2="15" stroke="#00E5FF" stroke-width="1.25" opacity="0.9"/>
+  <!-- Center dot -->
+  <circle cx="16" cy="15" r="1" fill="white" opacity="0.9"/>
+  <!-- Orb highlight -->
+  <circle cx="14.5" cy="13.5" r="1" fill="white" opacity="0.5"/>
 </svg>
