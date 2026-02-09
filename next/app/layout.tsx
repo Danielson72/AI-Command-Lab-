@@ -1,70 +1,36 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
+import './globals.css'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aicommandlab.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-command-lab.netlify.app'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "AI Command Lab | Multi-Brand Automation Platform",
-    template: "%s | AI Command Lab",
+    default: 'AI Command Lab',
+    template: '%s | AI Command Lab',
   },
-  description:
-    "Central dashboard for multi-brand automation. Powering SOTSVC.com, TrustedCleaningExpert.com, DLD-Online.com, and BossOfClean.com.",
-  keywords: [
-    "automation",
-    "multi-brand",
-    "cleaning services",
-    "SOTSVC",
-    "Trusted Cleaning Expert",
-    "DLD Online",
-    "Boss of Clean",
-  ],
-  authors: [{ name: "AI Command Lab" }],
-  robots: {
-    index: true,
-    follow: true,
+  description: 'Stop renting software. Start running your business.',
+  icons: {
+    icon: '/favicon.svg',
   },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: "AI Command Lab",
-    title: "AI Command Lab | Multi-Brand Automation Platform",
-    description:
-      "Central dashboard for multi-brand automation. Powering SOTSVC.com, TrustedCleaningExpert.com, DLD-Online.com, and BossOfClean.com.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "AI Command Lab",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Command Lab | Multi-Brand Automation Platform",
-    description:
-      "Central dashboard for multi-brand automation. Powering SOTSVC.com, TrustedCleaningExpert.com, DLD-Online.com, and BossOfClean.com.",
-    images: ["/og-image.png"],
-  },
-  alternates: {
-    canonical: siteUrl,
-  },
-};
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Inline script to prevent flash of wrong theme
+  const themeScript = `
+    (function() {
+      try {
+        var t = localStorage.getItem('acl-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  `
   return (
-    <html lang="en">
-      <body>
-        <header className="p-4 border-b">
-          <h1 className="text-xl font-bold">AI Command Lab</h1>
-        </header>
-        <main className="p-6">{children}</main>
-        <footer className="p-4 border-t text-sm text-center">
-          © {new Date().getFullYear()} AI Command Lab
-        </footer>
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body>{children}</body>
     </html>
-  );
+  )
 }

@@ -1,66 +1,393 @@
-/* Boss of Clean Platform - Global Styles */
+/* ============================================================
+   AI COMMAND LAB — "Command Center Futurism" Design System
+   ============================================================ */
 
-/* Reset & Base */
-* {
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ---- CSS RESET ---- */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ============================================================
+   THEME VARIABLES
+   ============================================================ */
+
+/* DARK THEME (default) */
+:root,
+[data-theme="dark"] {
+  /* Core surfaces */
+  --bg-primary: #060B18;
+  --bg-secondary: #0B1120;
+  --bg-card: rgba(15, 23, 42, 0.6);
+  --bg-card-hover: rgba(15, 23, 42, 0.8);
+  --bg-glass: rgba(15, 23, 42, 0.4);
+  --bg-input: rgba(15, 23, 42, 0.5);
+  --bg-sidebar: rgba(8, 14, 30, 0.95);
+
+  /* Borders */
+  --border-primary: rgba(56, 189, 248, 0.08);
+  --border-hover: rgba(56, 189, 248, 0.15);
+  --border-glass: rgba(148, 163, 184, 0.08);
+  --border-input: rgba(100, 116, 139, 0.2);
+  --border-input-focus: rgba(56, 189, 248, 0.5);
+
+  /* Text */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-accent: #38BDF8;
+
+  /* Accents */
+  --accent-primary: #38BDF8;
+  --accent-primary-rgb: 56, 189, 248;
+  --accent-glow: rgba(56, 189, 248, 0.15);
+  --accent-success: #34D399;
+  --accent-success-bg: rgba(52, 211, 153, 0.1);
+  --accent-warning: #FBBF24;
+  --accent-danger: #FB7185;
+  --accent-danger-bg: rgba(251, 113, 133, 0.1);
+}
+
+/* LIGHT THEME */
+[data-theme="light"] {
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.5);
+  --bg-input: rgba(241, 245, 249, 0.8);
+  --bg-sidebar: rgba(248, 250, 252, 0.97);
+
+  --border-primary: rgba(15, 23, 42, 0.06);
+  --border-hover: rgba(15, 23, 42, 0.12);
+  --border-glass: rgba(15, 23, 42, 0.06);
+  --border-input: rgba(100, 116, 139, 0.15);
+  --border-input-focus: rgba(14, 165, 233, 0.5);
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-accent: #0284C7;
+
+  --accent-primary: #0EA5E9;
+  --accent-primary-rgb: 14, 165, 233;
+  --accent-glow: rgba(14, 165, 233, 0.08);
+  --accent-success: #10B981;
+  --accent-success-bg: rgba(16, 185, 129, 0.08);
+  --accent-warning: #F59E0B;
+  --accent-danger: #EF4444;
+  --accent-danger-bg: rgba(239, 68, 68, 0.08);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Boss of Clean Brand Colors */
-:root {
-  --boc-blue: #007FFF;
-  --boc-dark: #1a1a1a;
-  --boc-light: #ffffff;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-/* Hero Section - Mobile First with WCAG AA Contrast */
-.hero-tagline {
-  color: var(--boc-blue);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* Contrast boost */
-  background: rgba(255, 255, 255, 0.9); /* Fallback background */
-  padding: 0.5rem 1rem;
+a { color: inherit; text-decoration: none; }
+
+::selection {
+  background: rgba(var(--accent-primary-rgb), 0.3);
+  color: var(--text-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-input);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.05); }
+  50% { box-shadow: 0 0 30px rgba(var(--accent-primary-rgb), 0.12); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-in {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-in-delay-1 { animation-delay: 0.05s; }
+.animate-in-delay-2 { animation-delay: 0.1s; }
+.animate-in-delay-3 { animation-delay: 0.15s; }
+.animate-in-delay-4 { animation-delay: 0.2s; }
+.animate-in-delay-5 { animation-delay: 0.25s; }
+.animate-in-delay-6 { animation-delay: 0.3s; }
+
+/* ============================================================
+   GLASS CARD SYSTEM
+   ============================================================ */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  transition: all 0.25s ease;
+}
+
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 32px rgba(var(--accent-primary-rgb), 0.06);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.acl-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.acl-input:focus {
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.08);
+}
+
+.acl-input::placeholder {
+  color: var(--text-muted);
+}
+
+.acl-select {
+  padding: 0.75rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.acl-select:focus {
+  border-color: var(--border-input-focus);
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent-primary), #0EA5E9);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(var(--accent-primary-rgb), 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  display: inline-block;
-  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* CEO Car Mascot - Enhanced Visibility */
-.ceo-car-mascot {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); /* Visibility boost */
-  max-width: 100%;
-  height: auto;
+.btn-ghost:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
 }
 
-/* Mobile Optimization */
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.badge-blue {
+  background: rgba(var(--accent-primary-rgb), 0.1);
+  color: var(--accent-primary);
+}
+
+.badge-green {
+  background: var(--accent-success-bg);
+  color: var(--accent-success);
+}
+
+.badge-amber {
+  background: rgba(251, 191, 36, 0.1);
+  color: var(--accent-warning);
+}
+
+/* ============================================================
+   STAT CARD
+   ============================================================ */
+.stat-card {
+  position: relative;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 768px) {
-  .hero-tagline {
-    font-size: 1.25rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Stronger shadow for mobile */
-  }
-
-  .ceo-car-mascot {
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); /* Enhanced mobile visibility */
-  }
+  .hide-mobile { display: none !important; }
 }
 
-/* Desktop */
-@media (min-width: 769px) {
-  .hero-tagline {
-    font-size: 2rem;
+
+/* ============================================================
+   ACL BRAND VARIABLES
+   ============================================================ */
+:root {
+  --acl-blue: #0070F3;
+  --acl-gold: #D4AF37;
+}
+
+/* ============================================================
+   KINGDOM SILK BACKGROUND
+   Subtle breathing radial gradients — premium ambient feel
+   ============================================================ */
+@keyframes silk-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+.silk-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.silk-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 5% 5%, rgba(0, 112, 243, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 70% at 95% 95%, rgba(212, 175, 55, 0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 30% at 50% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+  filter: blur(70px);
+  animation: silk-breathe 18s ease-in-out infinite;
+}
+
+.silk-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Light theme: reduced intensity */
+[data-theme="light"] .silk-bg::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 5% 5%, rgba(0, 112, 243, 0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 70% at 95% 95%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 30% at 50% 20%, rgba(0, 0, 0, 0.01) 0%, transparent 40%);
+}
+
+/* Prefers reduced motion: disable animation */
+@media (prefers-reduced-motion: reduce) {
+  .silk-bg::before {
+    animation: none;
   }
-}
-
-/* Utility Classes */
-.text-boc-blue {
-  color: var(--boc-blue);
-}
-
-.bg-boc-blue {
-  background-color: var(--boc-blue);
 }

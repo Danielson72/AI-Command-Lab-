@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { fetchAPI } from '@/lib/api';
+import { fetchAPI } from '../../../lib/api';
 
 type Msg = { role: 'user' | 'agent'; text: string };
 

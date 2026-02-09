@@ -1,0 +1,10 @@
+{
+    "chat.mcp.discovery.enabled": {
+        "claude-desktop": true,
+        "cursor-workspace": true,
+        "cursor-global": true
+    },
+    "chat.mcp.gallery.enabled": true,
+    "github.copilot.chat.newWorkspace.useContext7": true,
+    "chat.mcp.assisted.nuget.enabled": true
+}

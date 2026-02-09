@@ -1,11 +1,13 @@
-import Link from 'next/link';
+import { redirect } from 'next/navigation'
+import { createClient } from '../lib/supabase/server'
 
-export default function HomePage() {
-  return (
-    <section className="space-y-3">
-      <h2 className="text-2xl font-bold mb-2">Welcome to AI Command Lab</h2>
-      <p>Central dashboard for multi-brand automation.</p>
-      <Link className="underline" href="/lab/agentic-ui">Open Agentic UI Demo →</Link>
-    </section>
-  );
+export default async function HomePage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    redirect('/dashboard')
+  } else {
+    redirect('/login')
+  }
 }
