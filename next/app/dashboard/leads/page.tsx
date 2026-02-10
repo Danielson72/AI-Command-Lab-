@@ -1,7 +1,4 @@
-'use client'
-
-import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '../../../lib/supabase/client'
+import { createClient } from '../../../lib/supabase/server'
 
 interface Lead {
   id: string
@@ -12,106 +9,37 @@ interface Lead {
   phone: string | null
   source: string | null
   message: string | null
-  status: string
+  status: string | null
+  score: number | null
   contacted: boolean
   created_at: string
 }
 
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const supabase = createClient()
+export default async function LeadsPage() {
+  const supabase = await createClient()
 
-  const fetchLeads = useCallback(async () => {
-    setLoading(true)
-    let query = supabase
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100)
+  const { data: leads, count } = await supabase
+    .from('leads')
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
 
-    if (statusFilter === 'contacted') {
-      query = query.eq('contacted', true)
-    } else if (statusFilter === 'new') {
-      query = query.eq('contacted', false)
-    }
-
-    if (search) {
-      query = query.or(
-        `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
-      )
-    }
-
-    const { data, error } = await query
-    if (error) {
-      console.error('Error fetching leads:', error.message)
-      setLeads([])
-    } else {
-      setLeads(data || [])
-    }
-    setLoading(false)
-  }, [search, statusFilter, supabase])
-
-  useEffect(() => {
-    fetchLeads()
-  }, [fetchLeads])
-
-  async function toggleContacted(id: string, current: boolean) {
-    const { error } = await supabase
-      .from('leads')
-      .update({ contacted: !current })
-      .eq('id', id)
-
-    if (!error) {
-      setLeads((prev) =>
-        prev.map((l) =>
-          l.id === id ? { ...l, contacted: !current } : l
-        )
-      )
-    }
-  }
+  const leadsData: Lead[] = leads ?? []
+  const totalCount = count ?? 0
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 700 }}>Leads</h1>
         <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>
-          {leads.length} lead{leads.length !== 1 ? 's' : ''}
+          {totalCount} lead{totalCount !== 1 ? 's' : ''}
         </span>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-        <input
-          type="text"
-          placeholder="Search name, email, phone..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="acl-input"
-          style={{ flex: 1, minWidth: '200px' }}
-        />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="acl-select"
-        >
-          <option value="all">All Leads</option>
-          <option value="new">New (Not Contacted)</option>
-          <option value="contacted">Contacted</option>
-        </select>
-      </div>
-
-      {/* Table */}
-      {loading ? (
-        <p style={{ color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif' }}>Loading leads...</p>
-      ) : leads.length === 0 ? (
+      {leadsData.length === 0 ? (
         <div className="glass-card animate-in" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
           <p style={{ fontSize: '1rem', marginBottom: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>No leads yet</p>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>
-            Leads from your SOTSVC and TCE contact forms will appear here
-            once the leads table is connected to your n8n workflows.
+            Leads from your contact forms will appear here once connected.
           </p>
         </div>
       ) : (
@@ -120,41 +48,33 @@ export default function LeadsPage() {
             <thead>
               <tr>
                 <th style={styles.th}>Name</th>
+                <th style={styles.th}>Brand</th>
                 <th style={styles.th}>Email</th>
                 <th style={styles.th}>Phone</th>
                 <th style={styles.th}>Source</th>
-                <th style={styles.th}>Brand</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Score</th>
                 <th style={styles.th}>Date</th>
-                <th style={styles.th}>Contacted</th>
               </tr>
             </thead>
             <tbody>
-              {leads.map((lead) => (
+              {leadsData.map((lead) => (
                 <tr key={lead.id} style={styles.tr}>
                   <td style={styles.td}>{lead.name || '—'}</td>
+                  <td style={styles.td}>{lead.brand_name || '—'}</td>
                   <td style={styles.td}>{lead.email || '—'}</td>
                   <td style={styles.td}>{lead.phone || '—'}</td>
                   <td style={styles.td}>
                     <span className="badge badge-blue">{lead.source || 'web'}</span>
                   </td>
-                  <td style={styles.td}>{lead.brand_name || '—'}</td>
                   <td style={styles.td}>
-                    {new Date(lead.created_at).toLocaleDateString()}
+                    <StatusBadge status={lead.status} />
                   </td>
                   <td style={styles.td}>
-                    <button
-                      onClick={() => toggleContacted(lead.id, lead.contacted)}
-                      className={lead.contacted ? 'badge badge-green' : 'badge'}
-                      style={{
-                        background: lead.contacted ? 'var(--accent-success-bg)' : 'var(--bg-input)',
-                        color: lead.contacted ? 'var(--accent-success)' : 'var(--text-muted)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '0.25rem 0.6rem',
-                      }}
-                    >
-                      {lead.contacted ? '✓ Yes' : 'No'}
-                    </button>
+                    <ScoreBadge score={lead.score} />
+                  </td>
+                  <td style={styles.td}>
+                    {new Date(lead.created_at).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
@@ -164,6 +84,22 @@ export default function LeadsPage() {
       )}
     </div>
   )
+}
+
+function StatusBadge({ status }: { status: string | null }) {
+  const s = status?.toLowerCase() || 'new'
+  let className = 'badge badge-blue'
+  if (s === 'contacted') className = 'badge badge-amber'
+  if (s === 'qualified') className = 'badge badge-green'
+  return <span className={className}>{status || 'new'}</span>
+}
+
+function ScoreBadge({ score }: { score: number | null }) {
+  if (score === null) return <span style={{ color: 'var(--text-muted)' }}>—</span>
+  let color = 'var(--text-secondary)'
+  if (score >= 80) color = 'var(--accent-success)'
+  else if (score >= 60) color = 'var(--accent-warning)'
+  return <span style={{ color, fontWeight: 600 }}>{score}</span>
 }
 
 const styles: Record<string, React.CSSProperties> = {
