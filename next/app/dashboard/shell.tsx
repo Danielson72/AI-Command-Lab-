@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
-import AclShieldIcon from '../../src/components/ui/AclShieldIcon'
+import Image from 'next/image'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: '◆' },
@@ -54,7 +54,7 @@ export function DashboardShell({
         <div style={styles.sidebarHeader}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <AclShieldIcon size={22} variant="sidebar" />
+              <Image src="/images/acl-icon.jpg" alt="ACL" width={36} height={36} className="rounded-sm" />
               <h2 style={styles.sidebarLogo}>ACL</h2>
             </div>
             {mounted && (

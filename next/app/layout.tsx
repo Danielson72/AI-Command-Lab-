@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   description: 'Stop renting software. Start running your business.',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.png',
   },
 }
 
