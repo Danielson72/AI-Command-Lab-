@@ -8,14 +8,14 @@ interface AclShieldIconProps {
 }
 
 export default function AclShieldIcon({ size = 24, className = '', variant = 'sidebar' }: AclShieldIconProps) {
-  const imgSize = variant === 'login' ? size : size;
   return (
     <Image
       src="/images/acl-shield.jpg"
-      alt="AI Command Lab Shield"
-      width={imgSize}
-      height={imgSize}
-      className={`${className} rounded-sm`}
+      alt="AI Command Lab"
+      width={size}
+      height={size}
+      className={className}
+      style={{ borderRadius: variant === 'sidebar' ? '4px' : '8px', objectFit: 'contain' }}
       priority={variant === 'login'}
     />
   );
