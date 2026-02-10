@@ -1,0 +1,117 @@
+import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
+
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://sotsvc.com',
+  'https://www.sotsvc.com',
+  'https://bossofclean.com',
+  'https://www.bossofclean.com',
+  'https://trustedcleaningexpert.com',
+  'https://www.trustedcleaningexpert.com',
+  'http://localhost:3000',
+  'https://ai-command-lab.netlify.app',
+]
+
+function getCorsHeaders(origin: string | null) {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  }
+}
+
+// Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin')
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(origin),
+  })
+}
+
+export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin')
+  const corsHeaders = getCorsHeaders(origin)
+
+  try {
+    const body = await request.json()
+    const { name, email, phone, message, brand_slug, source } = body
+
+    // Validate required fields
+    if (!name || !email) {
+      return NextResponse.json(
+        { success: false, error: 'Name and email are required' },
+        { status: 400, headers: corsHeaders }
+      )
+    }
+
+    // Create Supabase client with service role key to bypass RLS
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Missing Supabase environment variables')
+      return NextResponse.json(
+        { success: false, error: 'Server configuration error' },
+        { status: 500, headers: corsHeaders }
+      )
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Look up brand by slug (default to 'sotsvc')
+    const slug = brand_slug || 'sotsvc'
+    const { data: brand, error: brandError } = await supabase
+      .from('brands')
+      .select('id, name')
+      .eq('slug', slug)
+      .single()
+
+    if (brandError) {
+      console.error('Brand lookup error:', brandError)
+      // Continue with null brand_id if brand not found
+    }
+
+    // Insert lead
+    const { data: lead, error: insertError } = await supabase
+      .from('leads')
+      .insert({
+        brand_id: brand?.id || null,
+        brand_name: brand?.name || slug,
+        name,
+        email,
+        phone: phone || null,
+        message: message || null,
+        source: source || 'embed',
+        status: 'new',
+        contacted: false,
+        score: 0,
+      })
+      .select('id')
+      .single()
+
+    if (insertError) {
+      console.error('Lead insert error:', insertError)
+      return NextResponse.json(
+        { success: false, error: 'Failed to save lead' },
+        { status: 500, headers: corsHeaders }
+      )
+    }
+
+    return NextResponse.json(
+      { success: true, id: lead.id },
+      { status: 201, headers: corsHeaders }
+    )
+  } catch (error) {
+    console.error('Lead API error:', error)
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500, headers: corsHeaders }
+    )
+  }
+}
+
+// Reminder: After deploying, enable the feature flag:
+// UPDATE feature_flags SET enabled = true WHERE name = 'lead_form_embed';
