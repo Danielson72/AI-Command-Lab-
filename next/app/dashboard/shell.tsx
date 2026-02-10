@@ -52,20 +52,9 @@ export function DashboardShell({
       {/* Sidebar */}
       <aside style={styles.sidebar}>
         <div style={styles.sidebarHeader}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Image src="/images/acl-icon.jpg" alt="ACL" width={36} height={36} className="rounded-sm" />
-              <h2 style={styles.sidebarLogo}>ACL</h2>
-            </div>
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                style={styles.themeToggle}
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {theme === 'dark' ? '☀' : '☾'}
-              </button>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Image src="/images/acl-icon.jpg" alt="ACL" width={36} height={36} className="rounded-sm" />
+            <h2 style={styles.sidebarLogo}>ACL</h2>
           </div>
           <span style={styles.sidebarTagline}>Command Lab</span>
         </div>
@@ -98,6 +87,15 @@ export function DashboardShell({
               {user.email?.split('@')[0]}
             </span>
           </div>
+          {mounted && (
+            <button
+              onClick={toggleTheme}
+              style={styles.themeToggle}
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? '☀ Light' : '☾ Dark'}
+            </button>
+          )}
           <button onClick={handleSignOut} style={styles.signOut}>
             Sign Out
           </button>
@@ -144,20 +142,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--text-muted)',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
-  },
-  themeToggle: {
-    width: '32px',
-    height: '24px',
-    borderRadius: '12px',
-    border: '1px solid var(--border-input)',
-    background: 'var(--bg-input)',
-    color: 'var(--text-secondary)',
-    fontSize: '0.85rem',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.2s ease',
+    fontFamily: 'DM Sans, sans-serif',
   },
   nav: {
     flex: 1,
@@ -202,6 +187,23 @@ const styles: Record<string, React.CSSProperties> = {
   userEmail: {
     fontSize: '0.8rem',
     color: 'var(--text-muted)',
+    fontFamily: 'DM Sans, sans-serif',
+  },
+  themeToggle: {
+    width: '100%',
+    padding: '0.4rem 0.6rem',
+    borderRadius: '6px',
+    border: '1px solid var(--border-input)',
+    background: 'var(--bg-input)',
+    color: 'var(--text-secondary)',
+    fontSize: '0.75rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.35rem',
+    transition: 'all 0.2s ease',
+    fontFamily: 'DM Sans, sans-serif',
   },
   signOut: {
     padding: '0.4rem 0.6rem',
@@ -211,6 +213,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--text-muted)',
     fontSize: '0.75rem',
     cursor: 'pointer',
+    fontFamily: 'DM Sans, sans-serif',
   },
   main: {
     flex: 1,
