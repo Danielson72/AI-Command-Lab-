@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Form Embed Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 3rem;
+    }
+    .test-info {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .test-info h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      color: #333;
+    }
+    .test-info code {
+      background: #f0f0f0;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    .test-info pre {
+      background: #f0f0f0;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .embed-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Command Lab - Lead Form Embed Test</h1>
+  <p class="subtitle">Testing the embeddable lead capture form with Shadow DOM</p>
+
+  <div class="test-info">
+    <h2>📋 Test Information</h2>
+    <p><strong>Embed Code Used:</strong></p>
+    <pre>&lt;script src="http://localhost:3000/embed/lead-form.js"
+  data-brand="sotsvc"
+  data-color="#00e5ff"&gt;&lt;/script&gt;</pre>
+    <p><strong>Features Being Tested:</strong></p>
+    <ul>
+      <li>✓ Shadow DOM isolation (styles won't leak)</li>
+      <li>✓ 7 form fields including dropdowns</li>
+      <li>✓ Brand color customization (cyan: #00e5ff)</li>
+      <li>✓ API submission to <code>/api/leads/capture</code></li>
+      <li>✓ Success/error state handling</li>
+      <li>✓ Responsive design</li>
+    </ul>
+  </div>
+
+  <div class="embed-container">
+    <h2 style="text-align: center; color: #333; margin-bottom: 1rem;">
+      Embedded Form Below ↓
+    </h2>
+
+    <!-- The embeddable form will appear here -->
+    <script src="http://localhost:3000/embed/lead-form.js"
+      data-brand="sotsvc"
+      data-color="#00e5ff">
+    </script>
+  </div>
+
+  <div class="test-info" style="margin-top: 2rem;">
+    <h2>🔍 How to Test</h2>
+    <ol>
+      <li>Fill out the form above with test data</li>
+      <li>Click "Get My Free Cleaning Quote"</li>
+      <li>Watch for success message or error state</li>
+      <li>Open browser DevTools to inspect Shadow DOM</li>
+      <li>Verify styles are isolated (use Inspector)</li>
+    </ol>
+    <p style="margin-top: 1rem; color: #666; font-size: 0.875rem;">
+      <strong>Note:</strong> If you see database errors, the Supabase configuration needs to be updated
+      to point to the correct database instance with the leads table.
+    </p>
+  </div>
+</body>
+</html>

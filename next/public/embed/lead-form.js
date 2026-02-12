@@ -1,297 +1,351 @@
 (function() {
   'use strict';
 
-  const API_URL = 'https://ai-command-lab.netlify.app/api/leads';
+  // Get the current script tag to read data attributes
+  const currentScript = document.currentScript || document.querySelector('script[src*="lead-form.js"]');
+  const brand = currentScript?.getAttribute('data-brand') || 'sotsvc';
+  const color = currentScript?.getAttribute('data-color') || '#00e5ff';
 
-  // Find the container element
-  const container = document.getElementById('acl-lead-form');
-  if (!container) {
-    console.error('ACL Lead Form: Container #acl-lead-form not found');
-    return;
-  }
+  const API_URL = 'https://ai-command-lab.netlify.app/api/leads/capture';
 
-  // Get brand from data attribute
-  const brand = container.getAttribute('data-brand') || 'sotsvc';
+  // Create container div
+  const container = document.createElement('div');
+  container.id = 'acl-lead-form-container';
 
-  // Create Shadow DOM
+  // Attach Shadow DOM
   const shadow = container.attachShadow({ mode: 'open' });
 
-  // Styles scoped to Shadow DOM
+  // Inject styles into Shadow DOM - light/neutral theme that adapts to host site
   const styles = `
-    :host {
-      display: block;
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
-    .acl-form-container {
-      background: linear-gradient(135deg, #0B1120 0%, #060B18 100%);
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      border-radius: 16px;
+    .lead-form-wrapper {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      max-width: 500px;
+      margin: 2rem auto;
       padding: 2rem;
-      max-width: 420px;
-      color: #F1F5F9;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .acl-form-title {
-      font-family: 'Outfit', -apple-system, sans-serif;
-      font-size: 1.25rem;
-      font-weight: 600;
+    .lead-form-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
       margin-bottom: 0.5rem;
-      color: #F1F5F9;
+      text-align: center;
     }
 
-    .acl-form-subtitle {
-      font-size: 0.9rem;
-      color: #94A3B8;
+    .lead-form-subtitle {
+      font-size: 0.875rem;
+      color: #666;
       margin-bottom: 1.5rem;
+      text-align: center;
     }
 
-    .acl-form-group {
+    .form-group {
       margin-bottom: 1rem;
     }
 
-    .acl-form-label {
+    label {
       display: block;
-      font-size: 0.8rem;
-      color: #94A3B8;
-      margin-bottom: 0.35rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 0.375rem;
     }
 
-    .acl-form-input {
+    .required {
+      color: #e53e3e;
+    }
+
+    input,
+    select,
+    textarea {
       width: 100%;
-      padding: 0.75rem 1rem;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(100, 116, 139, 0.2);
-      border-radius: 10px;
-      color: #F1F5F9;
-      font-family: inherit;
-      font-size: 0.9rem;
-      outline: none;
+      padding: 0.75rem;
+      font-size: 0.9375rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: inherit;
     }
 
-    .acl-form-input:focus {
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: ${color};
+      box-shadow: 0 0 0 3px ${color}20;
     }
 
-    .acl-form-input::placeholder {
-      color: #64748B;
+    input::placeholder,
+    textarea::placeholder {
+      color: #999;
     }
 
-    .acl-form-textarea {
+    textarea {
       min-height: 100px;
       resize: vertical;
     }
 
-    .acl-form-submit {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .submit-btn {
       width: 100%;
-      padding: 0.85rem 1.5rem;
-      background: linear-gradient(135deg, #38BDF8, #0EA5E9);
-      color: #FFFFFF;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: ${color};
       border: none;
-      border-radius: 10px;
-      font-family: 'Outfit', -apple-system, sans-serif;
-      font-weight: 600;
-      font-size: 0.95rem;
+      border-radius: 6px;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.1s ease;
       margin-top: 0.5rem;
     }
 
-    .acl-form-submit:hover {
+    .submit-btn:hover:not(:disabled) {
+      opacity: 0.9;
       transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.3);
     }
 
-    .acl-form-submit:active {
+    .submit-btn:active:not(:disabled) {
       transform: translateY(0);
     }
 
-    .acl-form-submit:disabled {
+    .submit-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
     }
 
-    .acl-form-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .acl-spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #FFFFFF;
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff60;
+      border-top-color: #fff;
       border-radius: 50%;
-      animation: acl-spin 0.8s linear infinite;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.5rem;
     }
 
-    @keyframes acl-spin {
+    @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    .acl-form-success {
+    .success-message {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 2rem;
     }
 
-    .acl-success-icon {
-      width: 48px;
-      height: 48px;
-      background: rgba(52, 211, 153, 0.15);
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1rem;
+      background: #48bb78;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1rem;
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
 
-    .acl-success-title {
-      font-family: 'Outfit', -apple-system, sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #34D399;
+    .success-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
       margin-bottom: 0.5rem;
     }
 
-    .acl-success-message {
-      font-size: 0.9rem;
-      color: #94A3B8;
+    .success-text {
+      font-size: 0.9375rem;
+      color: #666;
+      line-height: 1.6;
     }
 
-    .acl-form-error {
-      background: rgba(251, 113, 133, 0.1);
-      border: 1px solid rgba(251, 113, 133, 0.3);
-      border-radius: 8px;
+    .error-message {
       padding: 0.75rem 1rem;
+      background: #fff5f5;
+      border: 1px solid #fc8181;
+      border-radius: 6px;
+      color: #c53030;
+      font-size: 0.875rem;
       margin-bottom: 1rem;
-      font-size: 0.85rem;
-      color: #FB7185;
     }
 
-    .acl-required {
-      color: #FB7185;
-      margin-left: 2px;
-    }
-
-    @media (max-width: 480px) {
-      .acl-form-container {
+    @media (max-width: 600px) {
+      .lead-form-wrapper {
+        margin: 1rem;
         padding: 1.5rem;
-        border-radius: 12px;
       }
 
-      .acl-form-title {
-        font-size: 1.1rem;
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .lead-form-title {
+        font-size: 1.25rem;
       }
     }
   `;
 
-  // Initial form HTML
-  const formHTML = `
-    <style>${styles}</style>
-    <div class="acl-form-container">
-      <h3 class="acl-form-title">Get a Free Quote</h3>
-      <p class="acl-form-subtitle">Fill out the form below and we'll get back to you shortly.</p>
+  // Create style element
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  shadow.appendChild(styleSheet);
 
-      <form id="acl-lead-form-element">
-        <div class="acl-form-error" id="acl-error" style="display: none;"></div>
+  // Form state
+  let formState = {
+    loading: false,
+    error: null,
+    success: false,
+    submittedName: ''
+  };
 
-        <div class="acl-form-group">
-          <label class="acl-form-label" for="acl-name">Name <span class="acl-required">*</span></label>
-          <input type="text" id="acl-name" name="name" class="acl-form-input" placeholder="Your name" required>
-        </div>
+  // Render form
+  function renderForm() {
+    const formHTML = `
+      <div class="lead-form-wrapper">
+        <h2 class="lead-form-title">Get Your Free Quote</h2>
+        <p class="lead-form-subtitle">Professional commercial cleaning services</p>
 
-        <div class="acl-form-group">
-          <label class="acl-form-label" for="acl-email">Email <span class="acl-required">*</span></label>
-          <input type="email" id="acl-email" name="email" class="acl-form-input" placeholder="your@email.com" required>
-        </div>
+        ${formState.error ? `<div class="error-message">${formState.error}</div>` : ''}
 
-        <div class="acl-form-group">
-          <label class="acl-form-label" for="acl-phone">Phone</label>
-          <input type="tel" id="acl-phone" name="phone" class="acl-form-input" placeholder="(555) 123-4567">
-        </div>
+        <form id="lead-capture-form">
+          <div class="form-group">
+            <label>Name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="Your name" required />
+          </div>
 
-        <div class="acl-form-group">
-          <label class="acl-form-label" for="acl-message">Message</label>
-          <textarea id="acl-message" name="message" class="acl-form-input acl-form-textarea" placeholder="Tell us about your project..."></textarea>
-        </div>
+          <div class="form-group">
+            <label>Company Name <span class="required">*</span></label>
+            <input type="text" name="company" placeholder="Company name" required />
+          </div>
 
-        <button type="submit" class="acl-form-submit" id="acl-submit">
-          Send Message
-        </button>
-      </form>
-    </div>
-  `;
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone <span class="required">*</span></label>
+              <input type="tel" name="phone" placeholder="(555) 123-4567" required />
+            </div>
 
-  // Success HTML
-  const successHTML = `
-    <style>${styles}</style>
-    <div class="acl-form-container">
-      <div class="acl-form-success">
-        <div class="acl-success-icon">✓</div>
-        <h3 class="acl-success-title">Thank You!</h3>
-        <p class="acl-success-message">We'll be in touch shortly.</p>
+            <div class="form-group">
+              <label>Email <span class="required">*</span></label>
+              <input type="email" name="email" placeholder="you@company.com" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Square Footage</label>
+              <select name="sqft">
+                <option value="">Select size</option>
+                <option value="<1000">Under 1,000 sq ft</option>
+                <option value="1000-5000">1,000 - 5,000 sq ft</option>
+                <option value="5000-10000">5,000 - 10,000 sq ft</option>
+                <option value="10000-25000">10,000 - 25,000 sq ft</option>
+                <option value="25000-50000">25,000 - 50,000 sq ft</option>
+                <option value="50000+">50,000+ sq ft</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Cleaning Frequency</label>
+              <select name="frequency">
+                <option value="">Select frequency</option>
+                <option value="daily">Daily</option>
+                <option value="2-3-week">2-3 times/week</option>
+                <option value="weekly">Weekly</option>
+                <option value="bi-weekly">Bi-weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="one-time">One-time</option>
+                <option value="as-needed">As needed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Additional Details</label>
+            <textarea name="notes" placeholder="Tell us about your cleaning needs (optional)"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" ${formState.loading ? 'disabled' : ''}>
+            ${formState.loading ? '<span class="spinner"></span>Sending...' : 'Get My Free Cleaning Quote'}
+          </button>
+        </form>
       </div>
-    </div>
-  `;
+    `;
 
-  // Render initial form
-  shadow.innerHTML = formHTML;
+    shadow.innerHTML = '';
+    shadow.appendChild(styleSheet);
 
-  // Get form elements
-  const form = shadow.getElementById('acl-lead-form-element');
-  const submitBtn = shadow.getElementById('acl-submit');
-  const errorEl = shadow.getElementById('acl-error');
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = formHTML;
+    shadow.appendChild(wrapper);
+
+    // Attach form submit handler
+    const form = shadow.getElementById('lead-capture-form');
+    if (form) {
+      form.addEventListener('submit', handleSubmit);
+    }
+  }
+
+  // Render success state
+  function renderSuccess() {
+    const successHTML = `
+      <div class="lead-form-wrapper">
+        <div class="success-message">
+          <div class="success-icon">✓</div>
+          <h3 class="success-title">Thank you, ${formState.submittedName}!</h3>
+          <p class="success-text">
+            We've received your request and will contact you within 24 hours with your free cleaning quote.
+          </p>
+        </div>
+      </div>
+    `;
+
+    shadow.innerHTML = '';
+    shadow.appendChild(styleSheet);
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = successHTML;
+    shadow.appendChild(wrapper);
+  }
 
   // Handle form submission
-  form.addEventListener('submit', async function(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    // Hide any previous error
-    errorEl.style.display = 'none';
-
     // Get form data
-    const formData = {
-      name: shadow.getElementById('acl-name').value.trim(),
-      email: shadow.getElementById('acl-email').value.trim(),
-      phone: shadow.getElementById('acl-phone').value.trim() || null,
-      message: shadow.getElementById('acl-message').value.trim() || null,
-      brand_slug: brand,
-      source: 'embed'
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      company: formData.get('company'),
+      phone: formData.get('phone'),
+      email: formData.get('email'),
+      sqft: formData.get('sqft') || null,
+      frequency: formData.get('frequency') || null,
+      notes: formData.get('notes') || null,
+      brand: brand
     };
 
-    // Basic validation
-    if (!formData.name || !formData.email) {
-      errorEl.textContent = 'Please fill in all required fields.';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      errorEl.textContent = 'Please enter a valid email address.';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    // Show loading state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="acl-form-loading"><span class="acl-spinner"></span> Sending...</span>';
+    // Update state to loading
+    formState.loading = true;
+    formState.error = null;
+    formState.submittedName = data.name;
+    renderForm();
 
     try {
       const response = await fetch(API_URL, {
@@ -299,23 +353,29 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data)
       });
 
       const result = await response.json();
 
-      if (response.ok && result.success) {
-        // Show success message
-        shadow.innerHTML = successHTML;
+      if (result.success) {
+        formState.success = true;
+        renderSuccess();
       } else {
-        throw new Error(result.error || 'Failed to submit form');
+        formState.loading = false;
+        formState.error = result.error || 'Failed to submit form. Please try again.';
+        renderForm();
       }
     } catch (error) {
-      console.error('ACL Lead Form Error:', error);
-      errorEl.textContent = 'Something went wrong. Please try again.';
-      errorEl.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Send Message';
+      formState.loading = false;
+      formState.error = 'Network error. Please check your connection and try again.';
+      renderForm();
     }
-  });
+  }
+
+  // Initial render
+  renderForm();
+
+  // Append to body
+  document.body.appendChild(container);
 })();
