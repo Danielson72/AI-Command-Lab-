@@ -13,10 +13,28 @@ export default function LoginPage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [mounted, setMounted] = useState(false)
+
+  // Signup-specific fields
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [company, setCompany] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => { setMounted(true) }, [])
+
+  // Password validation
+  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
+  const passwordValid = password.length >= 8
+  const confirmPasswordValid = confirmPassword.length >= 8
+  const showPasswordMatch = confirmPassword.length > 0
+  const formValid = isSignUp
+    ? fullName.trim() && email && passwordValid && passwordsMatch
+    : email && password
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -25,9 +43,23 @@ export default function LoginPage() {
     setMessage('')
 
     if (isSignUp) {
+      if (!passwordsMatch) {
+        setError('Passwords do not match')
+        setLoading(false)
+        return
+      }
+
       const { error } = await supabase.auth.signUp({
-        email, password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: fullName,
+            phone: phone || null,
+            company: company || null
+          }
+        },
       })
       if (error) setError(error.message)
       else setMessage('Account created! You can now sign in.')
@@ -37,6 +69,15 @@ export default function LoginPage() {
       else { router.push('/dashboard'); router.refresh() }
     }
     setLoading(false)
+  }
+
+  function resetSignupFields() {
+    setFullName('')
+    setPhone('')
+    setCompany('')
+    setConfirmPassword('')
+    setShowPassword(false)
+    setShowConfirmPassword(false)
   }
 
   const logoSize = typeof window !== 'undefined' && window.innerWidth < 640 ? 88 : 108
@@ -118,11 +159,26 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Signup-only fields */}
+          {isSignUp && (
+            <div>
+              <label className="acl-label">FULL NAME</label>
+              <input
+                type="text"
+                placeholder="John Smith"
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                required
+                className="acl-input"
+              />
+            </div>
+          )}
+
           <div>
-            <label className="acl-label">Email Address</label>
+            <label className="acl-label">{isSignUp ? 'EMAIL' : 'Email Address'}</label>
             <input
               type="email"
-              placeholder="your@email.com"
+              placeholder={isSignUp ? 'you@example.com' : 'your@email.com'}
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -130,24 +186,160 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* Signup-only fields */}
+          {isSignUp && (
+            <>
+              <div>
+                <label className="acl-label">PHONE (OPTIONAL)</label>
+                <input
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  className="acl-input"
+                />
+                <div style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '0.5625rem',
+                  color: 'var(--acl-text-dim)',
+                  marginTop: '0.375rem',
+                  letterSpacing: '0.02em',
+                }}>
+                  For lead alerts via SMS
+                </div>
+              </div>
+
+              <div>
+                <label className="acl-label">COMPANY (OPTIONAL)</label>
+                <input
+                  type="text"
+                  placeholder="Your business name"
+                  value={company}
+                  onChange={e => setCompany(e.target.value)}
+                  className="acl-input"
+                />
+                <div style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '0.5625rem',
+                  color: 'var(--acl-text-dim)',
+                  marginTop: '0.375rem',
+                  letterSpacing: '0.02em',
+                }}>
+                  Helps us customize your experience
+                </div>
+              </div>
+            </>
+          )}
+
           <div>
-            <label className="acl-label">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="acl-input"
-            />
+            <label className="acl-label">PASSWORD</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                minLength={isSignUp ? 8 : 6}
+                className="acl-input"
+                style={{ paddingRight: '2.5rem' }}
+              />
+              {isSignUp && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--acl-text-dim)',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    padding: 0,
+                  }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              )}
+            </div>
+            {isSignUp && (
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.5625rem',
+                color: 'var(--acl-text-dim)',
+                marginTop: '0.375rem',
+                letterSpacing: '0.02em',
+              }}>
+                Minimum 8 characters
+              </div>
+            )}
           </div>
+
+          {/* Confirm Password - Signup only */}
+          {isSignUp && (
+            <div>
+              <label className="acl-label">CONFIRM PASSWORD</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="acl-input"
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--acl-text-dim)',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    padding: 0,
+                  }}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
+              {showPasswordMatch && (
+                <div style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '0.5625rem',
+                  color: passwordsMatch && confirmPasswordValid ? 'var(--acl-green)' : 'var(--acl-pink)',
+                  marginTop: '0.375rem',
+                  letterSpacing: '0.02em',
+                }}>
+                  {passwordsMatch && confirmPasswordValid ? 'Passwords match ✓' : 'Passwords do not match'}
+                </div>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (isSignUp && !formValid)}
             className="btn-primary"
-            style={{ width: '100%', marginTop: '0.5rem' }}
+            style={{
+              width: '100%',
+              marginTop: '0.5rem',
+              background: isSignUp
+                ? 'linear-gradient(135deg, var(--acl-gold), #F5A623)'
+                : 'linear-gradient(135deg, var(--acl-cyan), #0EA5E9)',
+              opacity: (loading || (isSignUp && !formValid)) ? 0.5 : 1,
+            }}
           >
             {loading ? 'Processing...' : (isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN')}
           </button>
@@ -155,7 +347,17 @@ export default function LoginPage() {
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
           <button
-            onClick={() => { setIsSignUp(!isSignUp); setError(''); setMessage('') }}
+            onClick={() => {
+              setIsSignUp(!isSignUp)
+              setError('')
+              setMessage('')
+              if (!isSignUp) {
+                // Switching to signup - keep email/password
+              } else {
+                // Switching to login - clear signup fields
+                resetSignupFields()
+              }
+            }}
             style={{
               background: 'none',
               border: 'none',
@@ -170,7 +372,7 @@ export default function LoginPage() {
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--acl-gold)'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'var(--acl-cyan)'}
           >
-            {isSignUp ? '← Back to Sign In' : 'Create New Account →'}
+            {isSignUp ? 'Already have an account? Sign in' : 'Create New Account →'}
           </button>
         </div>
       </div>
