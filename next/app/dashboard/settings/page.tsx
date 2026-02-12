@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function SettingsPage() {
   const [flags, setFlags] = useState({
@@ -12,8 +12,26 @@ export default function SettingsPage() {
     whiteLabel: false,
   })
 
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const savedTheme = localStorage.getItem('acl-theme') as 'dark' | 'light' | null
+    if (savedTheme) {
+      setTheme(savedTheme)
+    }
+  }, [])
+
   const toggleFlag = (key: keyof typeof flags) => {
     setFlags(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    localStorage.setItem('acl-theme', newTheme)
+    document.documentElement.setAttribute('data-theme', newTheme)
   }
 
   return (
@@ -107,6 +125,42 @@ export default function SettingsPage() {
               <AccountRow label="User ID" value="50a2d0d3..." />
               <AccountRow label="Joined" value="2/4/2026" />
               <AccountRow label="Tier" value="Pro" />
+
+              {/* Theme Toggle */}
+              {mounted && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '0.75rem',
+                  background: 'rgba(13,19,32,0.4)',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(0,229,255,0.1)',
+                }}>
+                  <span style={{
+                    fontFamily: 'Sora, sans-serif',
+                    fontSize: '0.75rem',
+                    color: 'var(--acl-text-mid)',
+                  }}>
+                    Theme
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{
+                      fontFamily: 'JetBrains Mono, monospace',
+                      fontSize: '0.625rem',
+                      color: 'var(--acl-text-dim)',
+                      textTransform: 'uppercase',
+                    }}>
+                      {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+                    </span>
+                    <div
+                      className={`toggle-switch ${theme === 'light' ? 'active' : ''}`}
+                      onClick={toggleTheme}
+                      style={{ flexShrink: 0 }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
