@@ -28,6 +28,10 @@ export default function DashboardContent({ currentDate, todayLeads }: DashboardC
         .card-animate-5 { animation-delay: 320ms; }
         .card-animate-6 { animation-delay: 400ms; }
         .card-animate-7 { animation-delay: 480ms; }
+        .card-animate-8 { animation-delay: 560ms; }
+        .card-animate-9 { animation-delay: 640ms; }
+        .card-animate-10 { animation-delay: 720ms; }
+        .card-animate-11 { animation-delay: 800ms; }
         .heartbeat-card {
           animation: heartbeat-glow 4s ease-in-out infinite, card-enter 0.3s ease-out forwards;
         }
@@ -138,6 +142,7 @@ export default function DashboardContent({ currentDate, todayLeads }: DashboardC
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '1rem',
+          marginBottom: '1.5rem',
         }}>
           <QuickActionButton
             title="Capture More Leads"
@@ -160,6 +165,18 @@ export default function DashboardContent({ currentDate, todayLeads }: DashboardC
             accent="gold"
             delay={7}
           />
+        </div>
+
+        {/* Dashboard Panels - 2 column grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '1.125rem',
+        }}>
+          <LeadCapturePanel delay={8} />
+          <AIAssistantsPanel delay={9} />
+          <ActivityFeedPanel delay={10} />
+          <SubscriptionTiersPanel delay={11} />
         </div>
       </div>
     </>
@@ -341,5 +358,340 @@ function QuickActionButton({ title, subtitle, icon, accent, delay }: QuickAction
         </div>
       </div>
     </button>
+  )
+}
+
+// PANEL 1: Lead Capture
+function LeadCapturePanel({ delay }: { delay: number }) {
+  const weekData = [
+    { day: 'M', count: 12 },
+    { day: 'T', count: 18 },
+    { day: 'W', count: 9 },
+    { day: 'T', count: 24 },
+    { day: 'F', count: 16 },
+    { day: 'S', count: 31 },
+    { day: 'S', count: 22 },
+  ]
+  const maxCount = Math.max(...weekData.map(d => d.count))
+
+  return (
+    <div className={`glass-card glass-card-cyan card-animate card-animate-${delay}`} style={{ padding: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acl-cyan)" strokeWidth="2">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="6"/>
+          <circle cx="12" cy="12" r="2"/>
+        </svg>
+        <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--acl-text)' }}>
+          LEAD CAPTURE
+        </h3>
+        <span style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: '0.625rem',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '12px',
+          background: 'rgba(0,230,118,0.15)',
+          color: 'var(--acl-green)',
+          border: '1px solid rgba(0,230,118,0.3)',
+        }}>LIVE</span>
+      </div>
+
+      {/* This week summary */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.625rem', color: 'var(--acl-text-dim)', marginBottom: '0.25rem' }}>
+          This week
+        </div>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '1.5rem', fontWeight: 700, color: 'var(--acl-cyan)' }}>
+          142 leads
+        </div>
+      </div>
+
+      {/* Bar chart */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem', height: '80px', marginBottom: '1.25rem' }}>
+        {weekData.map((item, idx) => {
+          const isLast = idx === weekData.length - 1
+          const height = (item.count / maxCount) * 100
+          return (
+            <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+              <div style={{
+                width: '100%',
+                height: `${height}%`,
+                background: isLast
+                  ? 'linear-gradient(180deg, var(--acl-cyan), rgba(0,229,255,0.44))'
+                  : 'linear-gradient(180deg, rgba(0,229,255,0.44), rgba(0,229,255,0.2))',
+                borderRadius: '3px',
+                transition: 'all 0.3s ease',
+              }} />
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.625rem', color: 'var(--acl-text-dim)' }}>
+                {item.day}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Brand breakdown */}
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{
+          flex: 1,
+          padding: '0.75rem',
+          background: 'rgba(0,229,255,0.06)',
+          border: '1px solid rgba(0,229,255,0.15)',
+          borderRadius: '6px',
+        }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.5625rem', color: 'var(--acl-cyan)', marginBottom: '0.25rem' }}>SOTSVC</div>
+          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.125rem', fontWeight: 700, color: 'var(--acl-text)' }}>68</div>
+        </div>
+        <div style={{
+          flex: 1,
+          padding: '0.75rem',
+          background: 'rgba(0,230,118,0.06)',
+          border: '1px solid rgba(0,230,118,0.15)',
+          borderRadius: '6px',
+        }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.5625rem', color: 'var(--acl-green)', marginBottom: '0.25rem' }}>BoC</div>
+          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.125rem', fontWeight: 700, color: 'var(--acl-text)' }}>41</div>
+        </div>
+        <div style={{
+          flex: 1,
+          padding: '0.75rem',
+          background: 'rgba(245,166,35,0.06)',
+          border: '1px solid rgba(245,166,35,0.15)',
+          borderRadius: '6px',
+        }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.5625rem', color: 'var(--acl-gold)', marginBottom: '0.25rem' }}>TCE</div>
+          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.125rem', fontWeight: 700, color: 'var(--acl-text)' }}>33</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// PANEL 2: AI Assistants
+function AIAssistantsPanel({ delay }: { delay: number }) {
+  const agents = [
+    { name: 'Willie (Life OS)', status: 'active' as const, tasks: 24, model: 'claude-sonnet-4.5' },
+    { name: 'Lead Capture Bot', status: 'active' as const, tasks: 142, model: 'gpt-4o-mini' },
+    { name: 'Content Writer', status: 'idle' as const, tasks: 8, model: 'claude-opus-4' },
+    { name: 'Site Analyzer', status: 'active' as const, tasks: 3, model: 'gemini-flash' },
+    { name: 'Social Publisher', status: 'pending' as const, tasks: 0, model: '—' },
+  ]
+
+  const statusConfig = {
+    active: { color: 'var(--acl-green)', label: 'ACTIVE', bg: 'rgba(0,230,118,0.15)', border: 'rgba(0,230,118,0.3)' },
+    idle: { color: 'var(--acl-gold)', label: 'IDLE', bg: 'rgba(245,166,35,0.15)', border: 'rgba(245,166,35,0.3)' },
+    pending: { color: 'var(--acl-text-dim)', label: 'PENDING', bg: 'rgba(58,74,98,0.15)', border: 'rgba(58,74,98,0.3)' },
+  }
+
+  return (
+    <div className={`glass-card glass-card-purple card-animate card-animate-${delay}`} style={{ padding: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acl-purple)" strokeWidth="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--acl-text)' }}>
+          AI ASSISTANTS
+        </h3>
+      </div>
+
+      {/* Agent rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {agents.map((agent, idx) => {
+          const config = statusConfig[agent.status]
+          return (
+            <div key={idx} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem',
+              background: 'rgba(13,19,32,0.4)',
+              borderRadius: '6px',
+              border: '1px solid rgba(179,136,255,0.1)',
+            }}>
+              {/* Status dot with glow */}
+              <div style={{
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                background: config.color,
+                boxShadow: `0 0 8px ${config.color}`,
+                flexShrink: 0,
+              }} />
+
+              {/* Name and model */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: 'var(--acl-text)', marginBottom: '0.125rem' }}>
+                  {agent.name}
+                </div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.625rem', color: 'var(--acl-text-dim)' }}>
+                  {agent.model}
+                </div>
+              </div>
+
+              {/* Task count */}
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6875rem', color: 'var(--acl-cyan)', fontWeight: 600, marginRight: '0.5rem' }}>
+                {agent.tasks}
+              </div>
+
+              {/* Status badge */}
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.5625rem',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '10px',
+                background: config.bg,
+                color: config.color,
+                border: `1px solid ${config.border}`,
+                whiteSpace: 'nowrap',
+              }}>
+                {config.label}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// PANEL 3: Activity Feed
+function ActivityFeedPanel({ delay }: { delay: number }) {
+  const activities = [
+    { color: 'var(--acl-cyan)', text: 'New lead captured: James R. — SOTSVC contact form', time: '2m ago' },
+    { color: 'var(--acl-purple)', text: 'Willie processed 3 Gmail threads, flagged 1 invoice', time: '8m ago' },
+    { color: 'var(--acl-green)', text: 'Stripe: $297 Pro subscription — Boss of Clean user', time: '14m ago' },
+    { color: 'var(--acl-purple)', text: 'Content queue: 4 posts scheduled for tomorrow', time: '32m ago' },
+  ]
+
+  return (
+    <div className={`glass-card glass-card-gold card-animate card-animate-${delay}`} style={{ padding: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acl-gold)" strokeWidth="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--acl-text)' }}>
+          ACTIVITY FEED
+        </h3>
+      </div>
+
+      {/* Activity items */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+        {activities.map((activity, idx) => (
+          <div key={idx} style={{ display: 'flex', gap: '0.75rem' }}>
+            {/* Left accent bar */}
+            <div style={{
+              width: '4px',
+              background: activity.color,
+              borderRadius: '2px',
+              flexShrink: 0,
+            }} />
+
+            {/* Content */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontFamily: 'Sora, sans-serif',
+                fontSize: '0.75rem',
+                color: 'var(--acl-text-mid)',
+                lineHeight: 1.5,
+                marginBottom: '0.25rem',
+              }}>
+                {activity.text}
+              </div>
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.5625rem',
+                color: 'var(--acl-text-dim)',
+              }}>
+                {activity.time}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// PANEL 4: Subscription Tiers
+function SubscriptionTiersPanel({ delay }: { delay: number }) {
+  const tiers = [
+    { name: 'FREE', price: '$0/mo', users: 12, width: 15, color: 'var(--acl-text-dim)' },
+    { name: 'STARTER', price: '$97/mo', users: 8, width: 40, color: 'var(--acl-cyan)' },
+    { name: 'PRO', price: '$297/mo', users: 3, width: 70, color: 'var(--acl-gold)' },
+    { name: 'ENTERPRISE', price: '$597/mo', users: 1, width: 95, color: 'var(--acl-green)' },
+  ]
+
+  return (
+    <div className={`glass-card glass-card-green card-animate card-animate-${delay}`} style={{ padding: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acl-green)" strokeWidth="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--acl-text)' }}>
+          SUBSCRIPTION TIERS
+        </h3>
+      </div>
+
+      {/* Tier progress bars */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem' }}>
+        {tiers.map((tier, idx) => (
+          <div key={idx}>
+            {/* Tier info */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                <span style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '0.625rem', fontWeight: 700, color: tier.color }}>
+                  {tier.name}
+                </span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.5625rem', color: 'var(--acl-text-dim)' }}>
+                  {tier.price}
+                </span>
+              </div>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.625rem', color: 'var(--acl-text-mid)' }}>
+                {tier.users} users
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{
+              width: '100%',
+              height: '3px',
+              background: 'rgba(13,19,32,0.6)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                width: `${tier.width}%`,
+                height: '100%',
+                background: `linear-gradient(90deg, ${tier.color}, ${tier.color}88)`,
+                boxShadow: `0 0 8px ${tier.color}44`,
+                borderRadius: '2px',
+              }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MRR total */}
+      <div style={{
+        padding: '1rem',
+        background: 'rgba(0,230,118,0.08)',
+        border: '1px solid rgba(0,230,118,0.2)',
+        borderRadius: '8px',
+        textAlign: 'center',
+      }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.625rem', color: 'var(--acl-text-dim)', marginBottom: '0.25rem' }}>
+          MRR TOTAL
+        </div>
+        <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.125rem', fontWeight: 700, color: 'var(--acl-green)' }}>
+          $1,870
+        </div>
+      </div>
+    </div>
   )
 }
