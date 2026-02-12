@@ -51,6 +51,17 @@
 
   /* Safe area insets for mobile */
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* White-label tokens (for future customization) */
+  --acl-logo-path: '/images/acl-logo.png';
+  --acl-brand-name: 'AI Command Lab';
+  --acl-brand-short: 'ACL';
+  --acl-font-display: 'Orbitron', sans-serif;
+  --acl-font-mono: 'JetBrains Mono', monospace;
+  --acl-font-body: 'Sora', sans-serif;
+  --acl-grid-visible: 1;
+  --acl-glass-blur: 8px;
+  --acl-corner-clip: 1;
 }
 
 /* ============================================================

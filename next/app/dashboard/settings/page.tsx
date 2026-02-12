@@ -1,125 +1,300 @@
-import { createClient } from '../../../lib/supabase/server'
+'use client'
 
-interface FeatureFlag {
-  id: string
-  name: string
-  enabled: boolean
-  description: string | null
-  created_at: string
-}
+import { useState } from 'react'
 
-export default async function SettingsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export default function SettingsPage() {
+  const [flags, setFlags] = useState({
+    leadCapture: true,
+    websiteHealth: true,
+    contentStudio: true,
+    aiAssistants: false,
+    socialPublisher: false,
+    whiteLabel: false,
+  })
 
-  const { data: featureFlags } = await supabase
-    .from('feature_flags')
-    .select('*')
-    .order('name', { ascending: true })
-
-  const flags: FeatureFlag[] = featureFlags ?? []
-  const enabledCount = flags.filter((f) => f.enabled).length
+  const toggleFlag = (key: keyof typeof flags) => {
+    setFlags(prev => ({ ...prev, [key]: !prev[key] }))
+  }
 
   return (
-    <div>
-      <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-        Settings
-      </h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontFamily: 'DM Sans, sans-serif' }}>
-        Account and platform configuration.
-      </p>
+    <>
+      <style jsx>{`
+        @keyframes card-enter {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .card-animate {
+          animation: card-enter 0.3s ease-out forwards;
+          opacity: 0;
+        }
+        .card-animate-1 { animation-delay: 0ms; }
+        .card-animate-2 { animation-delay: 80ms; }
 
-      {/* Account Section */}
-      <div className="glass-card animate-in animate-in-delay-1" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>
-          Account
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>Email</span>
-            <span style={{ fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>{user?.email || '—'}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>User ID</span>
-            <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
-              {user?.id?.slice(0, 8)}...
-            </span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>Joined</span>
-            <span style={{ fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif' }}>
-              {user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
-            </span>
-          </div>
-        </div>
-      </div>
+        .toggle-switch {
+          position: relative;
+          width: 36px;
+          height: 20px;
+          background: var(--acl-text-dim);
+          border-radius: 10px;
+          cursor: pointer;
+          transition: background 0.3s ease;
+        }
 
-      {/* Feature Flags Section */}
-      <div className="glass-card animate-in animate-in-delay-2" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1rem', fontWeight: 600, margin: 0 }}>
-            Feature Flags
-          </h2>
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'DM Sans, sans-serif' }}>
-            {enabledCount} of {flags.length} enabled
-          </span>
-        </div>
+        .toggle-switch.active {
+          background: var(--acl-cyan);
+        }
 
-        {flags.length === 0 ? (
-          <p style={{ padding: '2rem', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'DM Sans, sans-serif' }}>
-            No feature flags configured.
+        .toggle-switch::after {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 16px;
+          height: 16px;
+          background: white;
+          border-radius: 50%;
+          transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+          transform: translateX(16px);
+        }
+      `}</style>
+
+      <div>
+        {/* Page Header */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{
+            fontFamily: 'Orbitron, sans-serif',
+            fontSize: '1.125rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            marginBottom: '0.25rem',
+            letterSpacing: '0.02em',
+          }}>
+            SETTINGS
+          </h1>
+          <p style={{
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '0.6875rem',
+            color: 'var(--acl-text-dim)',
+          }}>
+            Account & feature configuration
           </p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {flags.map((flag) => (
-              <FlagRow key={flag.id} flag={flag} />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
 
-      {/* Phase 3 Notice */}
-      <div className="glass-card stat-card animate-in animate-in-delay-3" style={{ marginTop: '1.5rem', padding: '1.5rem' }}>
-        <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-          Coming in Phase 3
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, fontFamily: 'DM Sans, sans-serif' }}>
-          Brand configurations, notification preferences, API key management, and team settings will be available in Phase 3.
-        </p>
+        {/* Settings Cards Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '1.125rem',
+        }}>
+          {/* Account Card */}
+          <div className="glass-card glass-card-cyan card-animate card-animate-1" style={{ padding: '1.5rem' }}>
+            <h3 style={{
+              fontFamily: 'Orbitron, sans-serif',
+              fontSize: '0.6875rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              color: 'var(--acl-text)',
+              marginBottom: '1.25rem',
+            }}>
+              ACCOUNT
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+              <AccountRow label="Email" value="dalvarez@sotsvc.com" />
+              <AccountRow label="User ID" value="50a2d0d3..." />
+              <AccountRow label="Joined" value="2/4/2026" />
+              <AccountRow label="Tier" value="Pro" />
+            </div>
+          </div>
+
+          {/* Feature Flags Card */}
+          <div className="glass-card glass-card-gold card-animate card-animate-2" style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <h3 style={{
+                fontFamily: 'Orbitron, sans-serif',
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: 'var(--acl-text)',
+              }}>
+                FEATURE FLAGS
+              </h3>
+              <span style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.625rem',
+                padding: '0.2rem 0.5rem',
+                borderRadius: '12px',
+                background: 'rgba(245,166,35,0.15)',
+                color: 'var(--acl-gold)',
+                border: '1px solid rgba(245,166,35,0.3)',
+              }}>3 of 6</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <FeatureFlag
+                name="Lead Capture"
+                description="Capture & qualify leads"
+                phase="P2"
+                active={flags.leadCapture}
+                onToggle={() => toggleFlag('leadCapture')}
+              />
+              <FeatureFlag
+                name="Website Health"
+                description="SEO & performance audits"
+                phase="P3"
+                active={flags.websiteHealth}
+                onToggle={() => toggleFlag('websiteHealth')}
+              />
+              <FeatureFlag
+                name="Content Studio"
+                description="AI content generation"
+                phase="P3"
+                active={flags.contentStudio}
+                onToggle={() => toggleFlag('contentStudio')}
+              />
+              <FeatureFlag
+                name="AI Assistants"
+                description="Agent approval & monitoring"
+                phase="P5"
+                active={flags.aiAssistants}
+                onToggle={() => toggleFlag('aiAssistants')}
+                benefit="Save 6-10 hours/week"
+              />
+              <FeatureFlag
+                name="Social Publisher"
+                description="Multi-platform posting"
+                phase="P6"
+                active={flags.socialPublisher}
+                onToggle={() => toggleFlag('socialPublisher')}
+                benefit="3x engagement boost"
+              />
+              <FeatureFlag
+                name="White Label"
+                description="Agency re-branding"
+                phase="P9"
+                active={flags.whiteLabel}
+                onToggle={() => toggleFlag('whiteLabel')}
+                benefit="Client-ready platform"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
-function FlagRow({ flag }: { flag: FeatureFlag }) {
+function AccountRow({ label, value }: { label: string; value: string }) {
   return (
     <div style={{
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: '1rem 1.5rem',
-      borderBottom: '1px solid var(--border-glass)',
+      padding: '0.75rem',
+      background: 'rgba(13,19,32,0.4)',
+      borderRadius: '6px',
+      border: '1px solid rgba(0,229,255,0.1)',
     }}>
-      <div>
-        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.9rem', fontWeight: 500, marginBottom: '0.25rem' }}>
-          {formatFlagName(flag.name)}
-        </div>
-        {flag.description && (
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontFamily: 'DM Sans, sans-serif' }}>
-            {flag.description}
-          </div>
-        )}
-      </div>
-      <span className={flag.enabled ? 'badge badge-green' : 'badge badge-amber'}>
-        {flag.enabled ? 'Enabled' : 'Disabled'}
+      <span style={{
+        fontFamily: 'Sora, sans-serif',
+        fontSize: '0.75rem',
+        color: 'var(--acl-text-mid)',
+      }}>
+        {label}
+      </span>
+      <span style={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: '0.75rem',
+        color: 'var(--acl-text)',
+      }}>
+        {value}
       </span>
     </div>
   )
 }
 
-function formatFlagName(name: string): string {
-  return name
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+interface FeatureFlagProps {
+  name: string
+  description: string
+  phase: string
+  active: boolean
+  onToggle: () => void
+  benefit?: string
+}
+
+function FeatureFlag({ name, description, phase, active, onToggle, benefit }: FeatureFlagProps) {
+  return (
+    <div style={{
+      padding: '0.875rem',
+      background: 'rgba(13,19,32,0.4)',
+      borderRadius: '6px',
+      border: '1px solid rgba(245,166,35,0.1)',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <span style={{
+              fontFamily: 'Sora, sans-serif',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--acl-text)',
+            }}>
+              {name}
+            </span>
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '0.5625rem',
+              padding: '0.125rem 0.375rem',
+              borderRadius: '8px',
+              background: 'rgba(245,166,35,0.1)',
+              color: 'var(--acl-gold)',
+              border: '1px solid rgba(245,166,35,0.2)',
+            }}>
+              {phase}
+            </span>
+          </div>
+          <div style={{
+            fontFamily: 'Sora, sans-serif',
+            fontSize: '0.625rem',
+            color: 'var(--acl-text-dim)',
+          }}>
+            {description}
+          </div>
+        </div>
+
+        <div
+          className={`toggle-switch ${active ? 'active' : ''}`}
+          onClick={onToggle}
+          style={{ flexShrink: 0, marginLeft: '1rem' }}
+        />
+      </div>
+
+      {!active && benefit && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem' }}>
+          <span style={{
+            fontFamily: 'Sora, sans-serif',
+            fontSize: '0.625rem',
+            color: 'var(--acl-text-dim)',
+          }}>
+            {benefit}
+          </span>
+          <button style={{
+            background: 'none',
+            border: 'none',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '0.625rem',
+            color: 'var(--acl-gold)',
+            cursor: 'pointer',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}>
+            Upgrade →
+          </button>
+        </div>
+      )}
+    </div>
+  )
 }

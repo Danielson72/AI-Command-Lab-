@@ -306,7 +306,39 @@ export function DashboardShell({
 
         {/* Main content */}
         <main style={styles.main}>
-          <div style={styles.content} className="dashboard-content">{children}</div>
+          <div style={styles.content} className="dashboard-content">
+            {children}
+
+            {/* Footer */}
+            <footer style={{
+              borderTop: '1px solid var(--acl-border)',
+              marginTop: '1.75rem',
+              paddingTop: '0.875rem',
+              paddingBottom: '0.875rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+            }}>
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.5625rem',
+                color: 'var(--acl-text-dim)',
+                letterSpacing: '0.05em',
+              }}>
+                AI COMMAND LAB v0.2.0 · PHASE 2 · SOTSVC
+              </div>
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.5625rem',
+                color: 'var(--acl-text-dim)',
+                letterSpacing: '0.05em',
+              }}>
+                SOTSVC.COM · DLD-ONLINE.COM
+              </div>
+            </footer>
+          </div>
         </main>
 
         {/* Mobile Bottom Navigation */}
