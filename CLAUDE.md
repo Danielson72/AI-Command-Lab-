@@ -1,52 +1,61 @@
-# AI Command Lab — Project Brief (Source of Truth)
+# CLAUDE.md — AI Command Lab
 
-## Mission
-Multi-brand automation & website platform for: Sonz of Thunder Services (SOTSVC.com), TrustedCleaningExpert.com, DLD-Online.com, BossOfClean.com. Centralizes web, leads, payments, content, and AI agents.
+## Project Overview
+AI Command Lab is a self-hosted CRM replacing GoHighLevel. Built with Next.js + Supabase + Netlify.
+Live at: https://ai-command-lab.netlify.app
 
-## Non-negotiables
-- Hosting/CDN: **Netlify** (not Vercel)
-- Frontend: **Next.js (App Router)** in `/next`
-- Backend: **FastAPI** in `/server` (DigitalOcean), CORS for Netlify + localhost
-- DB/Auth/Storage: **Supabase** (RLS later)
-- Media: Cloudinary
-- Payments: Stripe
-- Dev: GitHub, VS Code, Claude Code (MCP)
+## Read First
+- **HANDOFF.md** — Full project status, credentials, database schema, automation architecture
+- **PRD-AI-Command-Lab.md** — Product requirements document
+- **product-context.md** — Marketing context (audience, competitors, USP)
+- **next/.env.local** — All credentials (Supabase URL, keys, site URL)
 
-## Current status
-- `/server` running locally at `http://localhost:8000` (`/health`, `/hello`, POST `/lead`)
-- `/next` running locally at `http://localhost:3000` with `/lab` and `/contact`
-- Env: `.env.local` (web), `server/.env` (api) — secrets NOT committed
+## Tech Stack
+- **Frontend:** Next.js (in /next/ directory)
+- **Database:** Supabase (project: wxsfnpbmngglkjlytlul)
+- **Hosting:** Netlify (ai-command-lab.netlify.app)
+- **Email:** Gmail via Google Workspace (dalvarez@sotsvc.com)
+- **Automation:** n8n cloud (sonzofthunder72.app.n8n.cloud)
+- **Future:** Stripe (SaaS billing), Twilio (SMS)
 
-## Repo layout
-- `/next` — web app (pages in `app/*`)
-- `/server` — FastAPI app (`app.py`, will split routes later)
-- `netlify.toml` — base="next", publish=".next"
-- `.claude/` — Claude Code config (MCP)
-- `CLAUDE.md` — this document (read me first)
+## Key Files
+- `/next/app/api/leads/route.ts` — Lead capture API
+- `/next/app/dashboard/` — Admin dashboard
+- `/next/app/login/page.tsx` — Auth page
+- `/supabase/migrations/` — Database migrations
+- `/next/public/embed/` — Embeddable form widget (Step 3)
 
-## Brand rules (must enforce)
-- SOTSVC: show **SOTSVC.com**, **TrustedCleaningExpert.com** in captions, phone **407-461-6039**, tagline **“YOU'RE CLEAN OR YOU'RE DIRTY”**, “Sonz” with a Z
-- DLD-Online: watermark **dld-online.com**
-- TCE: shield logo + “Trusted Cleaning Experts”
+## Database
+37 tables in Supabase. Key tables: brands (10 records), leads, profiles, feature_flags.
+Lead statuses: new → notified → contacted → converted (or opted_out).
+NEVER drop or delete existing tables. Use CREATE IF NOT EXISTS and ON CONFLICT DO NOTHING.
 
-## Phases
-- **Phase 1 (MVP):** sites live, contact/quote → FastAPI, store leads in Supabase, Stripe basic checkout
-- **Phase 2:** booking, proposals/invoices, analytics dashboards, content engine v2
-- **Phase 3:** agentic orchestration, Playwright MCP QA, AllCalculate
-- **Phase 4:** SaaS packaging, global payments, dispute automation
+## Current Sprint (Feb 2026)
+Step 2: n8n email notification on new leads → dalvarez@sotsvc.com
+Step 3: Embeddable JS form widget for all 10 brand websites
+Step 4: Automated email follow-up sequences (Day 1/3/5/7/14)
+Step 5: Twilio SMS for high-priority leads
 
-## Task backlog (next up)
-1. Save `/contact` leads into Supabase `public.leads`
-2. Deploy web to Netlify, API to DigitalOcean (systemd + nginx)
-3. Add brand theme toggles & shared UI components
-4. Add Stripe link creation endpoint
+## MCP Servers Available
+- n8n cloud (search_workflows, execute_workflow, get_workflow_details)
+- Supabase (read-only via MCP — use API or SQL editor for writes)
+- Stripe (for future billing features)
+- Netlify (deploy-site, get-projects, manage-env-vars)
 
-## How to run
-- **API:** `cd server && source .venv/bin/activate && python3 -m uvicorn app:app --reload --host 0.0.0.0 --port 8000`
-- **Web:** `cd next && npm run dev`
+## Build & Deploy
+```bash
+cd ~/AI-Command-Lab-/next
+npm ci && npm run build
+# Deploys automatically via Netlify on git push
+```
 
-## Claude prompts (examples)
-- “Add `/server/routes/lead.py` and refactor `app.py` to include router; keep behavior identical.”
-- “Create a Netlify-ready contact page that posts to `${process.env.NEXT_PUBLIC_API_URL}/lead` and handles success/error states.”
-- “Write SQL migration for `leads` (id uuid, created_at, name, email, phone, message, brand). RLS policy proposal for Phase 3.”
+## Brand Rules
+- "Sonz" not "Sons" for SOTSVC
+- CEO Cat (Boss of Clean) always wears glasses, suit, tie
+- Saturday = rest day
+- Always include both SOTSVC.com AND TrustedCleaningExpert.com in cleaning content
+- dalvarez@sotsvc.com is the business email (Google Workspace, NOT Outlook)
 
+## Product Context
+Full marketing context files at ~/.claude/skills/product-context-skills/
+Each business has: personas, competitors, SEO strategy, email sequences, cross-promotion rules.

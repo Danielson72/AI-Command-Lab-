@@ -224,6 +224,9 @@
         ${formState.error ? `<div class="error-message">${formState.error}</div>` : ''}
 
         <form id="lead-capture-form">
+          <!-- Honeypot field - hidden from real users, bots auto-fill it -->
+          <input type="text" name="_hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;" />
+
           <div class="form-group">
             <label>Name <span class="required">*</span></label>
             <input type="text" name="name" placeholder="Your name" required />
@@ -331,6 +334,7 @@
     const form = e.target;
     const formData = new FormData(form);
     const data = {
+      _hp: formData.get('_hp') || '',
       name: formData.get('name'),
       company: formData.get('company'),
       phone: formData.get('phone'),

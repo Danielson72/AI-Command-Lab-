@@ -37,7 +37,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { name, email, phone, message, brand_slug, source } = body
+    const { _hp, name, email, phone, message, brand_slug, source } = body
+
+    // Honeypot spam check - bots fill hidden fields, humans don't
+    if (_hp) {
+      return NextResponse.json(
+        { success: true, id: 'ok' },
+        { status: 200, headers: corsHeaders }
+      )
+    }
 
     // Validate required fields
     if (!name || !email) {
@@ -98,6 +106,25 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Failed to save lead' },
         { status: 500, headers: corsHeaders }
       )
+    }
+
+    // Fire-and-forget webhook notification to n8n
+    const webhookUrl = process.env.LEAD_NOTIFICATION_WEBHOOK
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lead_id: lead.id,
+          name,
+          email,
+          phone: phone || null,
+          message: message || null,
+          brand_slug: brand?.name || slug,
+          source: source || 'embed',
+          submitted_at: new Date().toISOString(),
+        }),
+      }).catch((err) => console.error('[Webhook] n8n notify failed:', err))
     }
 
     return NextResponse.json(

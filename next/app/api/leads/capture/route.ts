@@ -41,7 +41,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { name, company, phone, email, sqft, frequency, notes, brand } = body
+    const { _hp, name, company, phone, email, sqft, frequency, notes, brand } = body
+
+    // Honeypot spam check - bots fill hidden fields, humans don't
+    if (_hp) {
+      return NextResponse.json(
+        { success: true, id: 'ok' },
+        { status: 200, headers: corsHeaders }
+      )
+    }
 
     // Validate required fields
     if (!name || !email) {
@@ -74,27 +82,40 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Build metadata object with all form data
-    const metadata: Record<string, any> = {
-      brand: brand || 'sotsvc',
-      company: company || null,
+    // Look up brand by slug (default to 'sotsvc')
+    const brandSlug = brand || 'sotsvc'
+    const { data: brandData, error: brandError } = await supabase
+      .from('brands')
+      .select('id, name')
+      .eq('slug', brandSlug)
+      .single()
+
+    if (brandError) {
+      console.error('Brand lookup error:', brandError)
+      // Continue with null brand_id if brand not found
     }
+
+    // Build metadata object with additional form data
+    const metadata: Record<string, any> = {}
+    if (company) metadata.company = company
     if (sqft) metadata.sqft = sqft
     if (frequency) metadata.frequency = frequency
-    if (notes) metadata.notes = notes
 
-    // Insert lead into database (BossOfClean schema)
+    // Insert lead into database with correct schema
     const { data: lead, error: insertError } = await supabase
       .from('leads')
       .insert({
-        cleaner_id: null, // Will be assigned later when lead is distributed
-        customer_id: null, // Anonymous lead - no user account yet
-        lead_type: 'commercial_cleaning',
-        source: 'embed_form',
-        customer_name: name,
-        customer_phone: phone || null,
-        customer_email: email,
-        metadata,
+        brand_id: brandData?.id || null,
+        brand_name: brandData?.name || brandSlug,
+        name,
+        email,
+        phone: phone || null,
+        message: notes || null,
+        source: 'embed',
+        status: 'new',
+        contacted: false,
+        score: 0,
+        metadata: Object.keys(metadata).length > 0 ? metadata : null,
       })
       .select('id')
       .single()
@@ -105,6 +126,25 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Failed to save lead. Please try again.' },
         { status: 500, headers: corsHeaders }
       )
+    }
+
+    // Fire-and-forget webhook notification to n8n
+    const webhookUrl = process.env.LEAD_NOTIFICATION_WEBHOOK
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lead_id: lead.id,
+          name,
+          email,
+          phone: phone || null,
+          message: notes || null,
+          brand_slug: brandData?.name || brandSlug,
+          source: 'embed',
+          submitted_at: new Date().toISOString(),
+        }),
+      }).catch((err) => console.error('[Webhook] n8n notify failed:', err))
     }
 
     return NextResponse.json(
