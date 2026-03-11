@@ -27,6 +27,15 @@ const navItems = [
     )
   },
   {
+    label: 'Automations',
+    href: '/dashboard/automations/builder',
+    icon: () => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+    )
+  },
+  {
     label: 'Website Health',
     href: '/dashboard/brands',
     icon: () => (
@@ -89,9 +98,9 @@ const navItems = [
 const mobileNavItems = [
   navItems[0], // Command Center
   navItems[1], // Lead Capture
-  navItems[4], // AI Assistants
-  navItems[3], // Create Content
-  navItems[7], // Settings
+  navItems[5], // AI Assistants
+  navItems[4], // Create Content
+  navItems[8], // Settings
 ]
 
 export function DashboardShell({

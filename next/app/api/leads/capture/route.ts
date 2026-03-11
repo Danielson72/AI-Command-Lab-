@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 // Allowed origins for CORS - any website can embed the form
 const ALLOWED_ORIGINS = [
@@ -38,6 +39,16 @@ export async function OPTIONS(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin')
   const corsHeaders = getCorsHeaders(origin)
+
+  // Rate limit: max 5 submissions per minute per IP
+  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  const { allowed } = rateLimit(ip, 5, 60000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: corsHeaders }
+    )
+  }
 
   try {
     const body = await request.json()
